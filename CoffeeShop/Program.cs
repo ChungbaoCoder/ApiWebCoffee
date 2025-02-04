@@ -1,5 +1,7 @@
 using CoffeeShop.Database;
+using CoffeeShop.Infrastructure.Auth;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<ApplicationDbContext>(o =>
+builder.Services.AddDbContext<CoffeeDbContext>(o =>
+{
+    o.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
+});
+
+builder.Services.AddDbContext<IdentityDbContext>(o =>
 {
     o.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
 });
