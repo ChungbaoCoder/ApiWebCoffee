@@ -2,16 +2,20 @@
 
 public class ItemOrdered
 {
-    public int ItemId { get; private set; }
+    public int CoffeeItemId { get; private set; }
     public string ItemName { get; private set; }
     public string PictureUri { get; private set; }
+    public string? Option { get; private set; }
+    public string? Choices { get; private set; }
 
     private ItemOrdered() { }
 
-    public ItemOrdered(int itemId, string itemName, string pictureUri)
+    public ItemOrdered(int coffeeItemId, string itemName, string pictureUri, string? option, string? choices)
     {
-        ItemId = itemId;
+        CoffeeItemId = coffeeItemId;
         ItemName = itemName;
         PictureUri = pictureUri;
+        Option = option;
+        Choices = choices;
     }
 }

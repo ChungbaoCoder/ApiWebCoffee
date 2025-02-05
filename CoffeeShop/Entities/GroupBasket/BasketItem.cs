@@ -3,16 +3,17 @@
 public class BasketItem
 {
     public int BasketItemId { get; private set; }
-    public int BasketId { get; private set; }
-    public int ItemId { get; private set; }
+    public int CoffeeItemId { get; private set; }
     public decimal Price { get; private set; }
     public int Quantity { get; private set; }
 
-    private BasketItem() { }
+    public int BasketId { get; private set; }
+    public Basket Basket { get; private set; }
 
-    public BasketItem(int itemId, decimal price, int quantity)
+    public BasketItem(int basketId, int coffeeItemId, decimal price, int quantity)
     {
-        ItemId = itemId;
+        BasketId = basketId;
+        CoffeeItemId = coffeeItemId;
         Price = price;
         SetQuantity(quantity);
     }

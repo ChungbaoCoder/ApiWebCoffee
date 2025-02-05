@@ -3,27 +3,25 @@
 public class Basket
 {
     public int BasketId { get; private set; }
-    public string BuyerId { get; private set; }
+    public int BuyerId { get; private set; }
 
     private readonly List<BasketItem> _items = new List<BasketItem>();
     public IReadOnlyCollection<BasketItem> Items => _items.AsReadOnly();
     public int TotalItems => _items.Sum(i => i.Quantity);
 
-    private Basket() { }
-
-    public Basket(string buyerId)
+    public Basket(int buyerId)
     {
         BuyerId = buyerId;
     }
 
-    public void AddItem(int basketItemId, decimal price, int quantity)
+    public void AddItem(int coffeeItemId, decimal price, int quantity)
     {
-        if (!Items.Any(i => i.BasketItemId == basketItemId))
+        if (!Items.Any(i => i.BasketItemId == coffeeItemId))
         {
-            _items.Add(new BasketItem(basketItemId, price, quantity));
+            _items.Add(new BasketItem(BasketId, coffeeItemId, price, quantity));
+            return;
         }
-
-        var existItem = Items.First(i => i.BasketItemId == basketItemId);
+        var existItem = Items.First(i => i.CoffeeItemId == coffeeItemId);
         existItem.AddQuantity(quantity);
     }
 
@@ -32,7 +30,7 @@ public class Basket
         _items.RemoveAll(i => i.Quantity == 0);
     }
 
-    public void SetNewBuyerId(string buyerId)
+    public void SetNewBuyerId(int buyerId)
     {
         BuyerId = buyerId;
     }

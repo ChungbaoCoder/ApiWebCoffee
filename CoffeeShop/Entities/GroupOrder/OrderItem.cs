@@ -2,17 +2,20 @@
 
 public class OrderItem
 {
-    public int OrderId { get; private set; }
-    public ItemOrdered? Item { get; private set; }
+    public int OrderItemId { get; private set; } 
     public decimal Price { get; private set; }
     public int Quantity { get; private set; }
+    public ItemOrdered Item { get; private set; }
+
+    public int OrderId { get; private set; }
+    public Order Order { get; private set; }
 
     private OrderItem() { }
 
-    public OrderItem(ItemOrdered item, decimal price, int quantity)
+    public OrderItem(decimal price, int quantity, ItemOrdered coffeeItem)
     {
-        Item = item;
         Price = price;
         Quantity = quantity;
+        Item = coffeeItem;
     }
 }

@@ -14,10 +14,10 @@ builder.Services.AddDbContext<CoffeeDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
 });
 
-builder.Services.AddDbContext<IdentityDbContext>(o =>
-{
-    o.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
-});
+//builder.Services.AddDbContext<IdentityDbContext>(o =>
+//{
+//    o.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
+//});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

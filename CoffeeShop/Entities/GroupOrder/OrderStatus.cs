@@ -2,16 +2,16 @@
 
 public class OrderStatus
 {
-    public int OrderStatusId { get; private set; }
-    public int OrderId { get; private set; }
     public string Status { get; private set; }
-    public DateTime OrderDate { get; private set; }
+    public DateTime CompleteTime { get; private set; }
+    public DateTime LastUpdate { get; private set; } = DateTime.Now;
 
-    public OrderStatus(int orderId, string status, DateTime orderDate)
+    private OrderStatus() { }
+
+    public OrderStatus(string status, DateTime completeTime)
     {
-        OrderId = orderId;
         SetStatus(status);
-        OrderDate = orderDate;
+        CompleteTime = completeTime;
     }
 
     public void SetStatus(string status)
@@ -24,16 +24,6 @@ public class OrderStatus
         {
             Status = status;
         }
-        UpdateDate();
-    }
-
-    public void UpdateDate()
-    {
-        OrderDate = DateTime.Now;
-    }
-
-    public string Detail()
-    {
-        return $"Mặt hàng {OrderId}.Hiện {Status} trong ngày {OrderDate:dd/MM/yyyy}";
+        LastUpdate = DateTime.Now;
     }
 }
