@@ -1,4 +1,4 @@
-﻿using CoffeeShop.Database.Configurations;
+﻿using System.Reflection;
 using CoffeeShop.Entities.GroupBasket;
 using CoffeeShop.Entities.GroupItem;
 using CoffeeShop.Entities.GroupOrder;
@@ -14,23 +14,17 @@ public class CoffeeDbContext : DbContext
     }
 
     public DbSet<CoffeeItem> CoffeeItems { get; set; }
-    public DbSet<Basket> Baskets { get; set; }
+    public DbSet<BuyerBasket> Baskets { get; set; }
     public DbSet<BasketItem> BasketItems { get; set; }
-    public DbSet<Order> Orders { get; set; }
+    public DbSet<BuyerOrder> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Buyer> Buyer { get; set; }
     public DbSet<Address> Address { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new BasketItemConfiguration());
-        modelBuilder.ApplyConfiguration(new BasketConfiguration());
-        modelBuilder.ApplyConfiguration(new AddressConfiguration());
-        modelBuilder.ApplyConfiguration(new BuyerConfiguration());
-        modelBuilder.ApplyConfiguration(new CoffeeItemConfiguration());
-        modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
-        modelBuilder.ApplyConfiguration(new OrderConfiguration());
-
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

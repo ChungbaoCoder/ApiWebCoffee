@@ -6,8 +6,8 @@ namespace CoffeeShop.Features.User;
 [Route("api/[controller]")]
 public class UserController : Controller
 {
-    [HttpGet]
-    public IActionResult Index()
+    [HttpPost]
+    public IActionResult Register()
     {
         return Ok("User");
     }

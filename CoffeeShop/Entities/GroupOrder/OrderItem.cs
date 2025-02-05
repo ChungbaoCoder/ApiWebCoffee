@@ -8,7 +8,7 @@ public class OrderItem
     public ItemOrdered Item { get; private set; }
 
     public int OrderId { get; private set; }
-    public Order Order { get; private set; }
+    public BuyerOrder Order { get; private set; }
 
     private OrderItem() { }
 

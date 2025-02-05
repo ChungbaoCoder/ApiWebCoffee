@@ -37,11 +37,9 @@ public class CoffeeItemConfiguration : IEntityTypeConfiguration<CoffeeItem>
         builder.OwnsOne(ci => ci.Customization, a =>
         {
             a.Property(c => c.Option)
-                .IsRequired()
                 .HasColumnType("nvarchar(100)");
 
             a.Property(c => c.Choices)
-                .IsRequired()
                 .HasColumnType("nvarchar(100)");
         });
 
@@ -54,10 +52,5 @@ public class CoffeeItemConfiguration : IEntityTypeConfiguration<CoffeeItem>
             a.Property(a => a.NextBatchTime)
                 .HasColumnType("datetime");
         });
-
-        //builder.HasData(
-        //    new Item { ItemId = 1, ItemName = "Espresso", ItemPrice = 2.50m, Category = "Espresso" },
-        //    new Item { ItemId = 2, ItemName = "Latte", ItemPrice = 3.50m, Category = "Latte" }
-        //);
     }
 }

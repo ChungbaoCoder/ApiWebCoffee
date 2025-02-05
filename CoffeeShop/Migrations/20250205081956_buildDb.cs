@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CoffeeShop.Migrations
 {
     /// <inheritdoc />
-    public partial class addmigrationbuildDb : Migration
+    public partial class buildDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,8 +52,8 @@ namespace CoffeeShop.Migrations
                     Size = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     Category = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     PictureUri = table.Column<string>(type: "varchar(265)", nullable: false),
-                    Customization_Option = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    Customization_Choices = table.Column<string>(type: "nvarchar(100)", nullable: false),
+                    Customization_Option = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    Customization_Choices = table.Column<string>(type: "nvarchar(100)", nullable: true),
                     Availability_InStock = table.Column<bool>(type: "bit", nullable: false),
                     Availability_NextBatchTime = table.Column<DateTime>(type: "datetime", nullable: true)
                 },

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoffeeShop.Migrations
 {
     [DbContext(typeof(CoffeeDbContext))]
-    [Migration("20250205034534_add-migration buildDb")]
-    partial class addmigrationbuildDb
+    [Migration("20250205081956_buildDb")]
+    partial class buildDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -252,11 +252,9 @@ namespace CoffeeShop.Migrations
                                 .HasColumnType("int");
 
                             b1.Property<string>("Choices")
-                                .IsRequired()
                                 .HasColumnType("nvarchar(100)");
 
                             b1.Property<string>("Option")
-                                .IsRequired()
                                 .HasColumnType("nvarchar(100)");
 
                             b1.HasKey("CoffeeItemId");

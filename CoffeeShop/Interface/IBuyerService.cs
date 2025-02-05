@@ -1,5 +1,5 @@
 ﻿namespace CoffeeShop.Interface;
 
-public interface IBuyerService
+public class IBuyerService
 {
 }

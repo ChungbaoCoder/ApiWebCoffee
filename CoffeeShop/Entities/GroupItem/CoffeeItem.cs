@@ -14,15 +14,17 @@ public class CoffeeItem
 
     private CoffeeItem() { }
 
-    public CoffeeItem(string name, string description, decimal price, string size, string category, string pictureUri, Customization customization, Availability availability)
+    public CoffeeItem(string name, string description, string category, decimal price, string size, string pictureUri, Customization customization, Availability availability)
     {
         Name = name;
         Description = description;
+        Category = category;
         Price = price;
         Size = size;
-        Category = category;
         PictureUri = pictureUri;
         Customization = customization;
         Availability = availability;
     }
+
+
 }

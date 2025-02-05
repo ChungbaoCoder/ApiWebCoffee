@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CoffeeShop.Database.Configurations;
 
-public class BasketConfiguration : IEntityTypeConfiguration<Basket>
+public class BasketConfiguration : IEntityTypeConfiguration<BuyerBasket>
 {
-    public void Configure(EntityTypeBuilder<Basket> builder)
+    public void Configure(EntityTypeBuilder<BuyerBasket> builder)
     {
         builder.Ignore(b => b.Items);
 

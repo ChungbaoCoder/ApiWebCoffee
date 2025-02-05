@@ -12,4 +12,10 @@ public class Availability
         InStock = inStock;
         NextBatchTime = nextBatchTime;
     }
+
+    //public void UpdateAvailbility(bool inStock, DateTime nextBatchTime)
+    //{
+    //    InStock = inStock;
+    //    NextBatchTime = nextBatchTime;
+    //}
 }

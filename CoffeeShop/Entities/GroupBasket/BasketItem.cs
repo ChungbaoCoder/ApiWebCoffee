@@ -8,7 +8,7 @@ public class BasketItem
     public int Quantity { get; private set; }
 
     public int BasketId { get; private set; }
-    public Basket Basket { get; private set; }
+    public BuyerBasket Basket { get; private set; }
 
     public BasketItem(int basketId, int coffeeItemId, decimal price, int quantity)
     {

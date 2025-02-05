@@ -1,6 +1,6 @@
 ﻿namespace CoffeeShop.Entities.GroupOrder;
 
-public class Order
+public class BuyerOrder
 {
     public int OrderId { get; private set; }
     public int BuyerId { get; private set; }
@@ -13,9 +13,9 @@ public class Order
     public IReadOnlyCollection<OrderItem> OrderItems => _orderItems.AsReadOnly();
     public decimal Total => _orderItems.Sum(oi => oi.Price * oi.Quantity);
 
-    private Order() { }
+    private BuyerOrder() { }
 
-    public Order(int buyerId, OrderAddress shipAddress, OrderStatus status, List<OrderItem> orderItems)
+    public BuyerOrder(int buyerId, OrderAddress shipAddress, OrderStatus status, List<OrderItem> orderItems)
     {
         BuyerId = buyerId;
         ShipAddress = shipAddress;

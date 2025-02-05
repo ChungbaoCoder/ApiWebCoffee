@@ -1,6 +1,6 @@
 ﻿namespace CoffeeShop.Entities.GroupBasket;
 
-public class Basket
+public class BuyerBasket
 {
     public int BasketId { get; private set; }
     public int BuyerId { get; private set; }
@@ -9,7 +9,7 @@ public class Basket
     public IReadOnlyCollection<BasketItem> Items => _items.AsReadOnly();
     public int TotalItems => _items.Sum(i => i.Quantity);
 
-    public Basket(int buyerId)
+    public BuyerBasket(int buyerId)
     {
         BuyerId = buyerId;
     }

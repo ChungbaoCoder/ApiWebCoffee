@@ -1,5 +1,7 @@
-﻿namespace CoffeeShop.Features.Order;
+﻿using CoffeeShop.Interface;
 
-public class OrderService
+namespace CoffeeShop.Features.Order;
+
+public class OrderService : IOrderService
 {
 }
