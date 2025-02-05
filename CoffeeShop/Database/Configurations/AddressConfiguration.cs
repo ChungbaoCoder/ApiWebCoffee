@@ -1,4 +1,4 @@
-﻿using CoffeeShop.Entities.GroupUser;
+﻿using CoffeeShop.Entities.GroupBuyer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

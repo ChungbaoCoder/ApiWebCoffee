@@ -2,7 +2,7 @@
 using CoffeeShop.Entities.GroupBasket;
 using CoffeeShop.Entities.GroupItem;
 using CoffeeShop.Entities.GroupOrder;
-using CoffeeShop.Entities.GroupUser;
+using CoffeeShop.Entities.GroupBuyer;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShop.Database;

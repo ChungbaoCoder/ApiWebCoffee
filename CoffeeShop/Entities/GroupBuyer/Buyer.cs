@@ -1,8 +1,12 @@
-﻿namespace CoffeeShop.Entities.GroupUser;
+﻿using CoffeeShop.Entities.GroupBasket;
+using CoffeeShop.Entities.GroupOrder;
+
+namespace CoffeeShop.Entities.GroupBuyer;
 
 public class Buyer
 {
     public int BuyerId { get; private set; }
+    public string? UserGuid { get; private set; }
     public string Name { get; private set; }
     public string Email { get; private set; }
     public DateTime DateCreated { get; private set; } = DateTime.Now;
@@ -10,6 +14,11 @@ public class Buyer
     
     private List<Address> _address = new List<Address>();
     public IReadOnlyCollection<Address> Address => _address.AsReadOnly();
+    private List<BuyerBasket> _basket = new List<BuyerBasket>();
+    public IReadOnlyCollection<BuyerBasket> Baskets => _basket.AsReadOnly();
+    private List<BuyerOrder> _order = new List<BuyerOrder>();
+    public IReadOnlyCollection<BuyerOrder> Order => _order.AsReadOnly();
+
     //private List<PaymentMethod> _paymentMethods = new List<PaymentMethod>();
     //public IReadOnlyCollection<PaymentMethod> PaymentMethods => _paymentMethods.AsReadOnly();
 

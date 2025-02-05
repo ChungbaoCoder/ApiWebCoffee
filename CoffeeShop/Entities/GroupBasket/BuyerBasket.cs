@@ -1,9 +1,12 @@
-﻿namespace CoffeeShop.Entities.GroupBasket;
+﻿using CoffeeShop.Entities.GroupBuyer;
+
+namespace CoffeeShop.Entities.GroupBasket;
 
 public class BuyerBasket
 {
     public int BasketId { get; private set; }
     public int BuyerId { get; private set; }
+    public Buyer Buyer { get; private set; }
 
     private readonly List<BasketItem> _items = new List<BasketItem>();
     public IReadOnlyCollection<BasketItem> Items => _items.AsReadOnly();

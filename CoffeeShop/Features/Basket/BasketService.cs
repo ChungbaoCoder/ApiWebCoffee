@@ -10,6 +10,11 @@ public class BasketService : IBasketService
         throw new NotImplementedException();
     }
 
+    public Task CreateBasketForUser()
+    {
+        throw new NotImplementedException();
+    }
+
     public Task DeleteBasketAsync(int basketId)
     {
         throw new NotImplementedException();

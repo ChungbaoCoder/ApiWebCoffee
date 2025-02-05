@@ -1,9 +1,12 @@
-﻿namespace CoffeeShop.Entities.GroupOrder;
+﻿using CoffeeShop.Entities.GroupBuyer;
+
+namespace CoffeeShop.Entities.GroupOrder;
 
 public class BuyerOrder
 {
     public int OrderId { get; private set; }
     public int BuyerId { get; private set; }
+    public Buyer Buyer { get; private set; }
     public DateTime CreatedDate { get; private set; } = DateTime.Now;
     public DateTime UpdatedDate { get; private set; } = DateTime.Now;
     public OrderAddress ShipAddress { get; private set; }

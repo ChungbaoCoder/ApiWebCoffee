@@ -1,4 +1,4 @@
-﻿using CoffeeShop.Entities.GroupUser;
+﻿using CoffeeShop.Entities.GroupBuyer;
 using CoffeeShop.Infrastructure.Auth;
 using CoffeeShop.Interface;
 using Microsoft.AspNetCore.Identity;

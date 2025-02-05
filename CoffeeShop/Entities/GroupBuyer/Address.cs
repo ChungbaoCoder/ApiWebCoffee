@@ -1,4 +1,4 @@
-﻿namespace CoffeeShop.Entities.GroupUser;
+﻿namespace CoffeeShop.Entities.GroupBuyer;
 
 public class Address
 {

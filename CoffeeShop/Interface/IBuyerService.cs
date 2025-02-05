@@ -1,5 +1,6 @@
 ﻿namespace CoffeeShop.Interface;
 
-public class IBuyerService
+public interface IBuyerService
 {
+    Task Register(string name, string email);
 }

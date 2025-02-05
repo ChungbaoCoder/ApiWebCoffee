@@ -23,9 +23,9 @@ builder.Services.AddDbContext<CoffeeDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
 });
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<UserDbContext>()
-    .AddDefaultTokenProviders();
+//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+//    .AddEntityFrameworkStores<UserDbContext>()
+//    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication("Cookie")
     .AddCookie("Cookie", o =>
