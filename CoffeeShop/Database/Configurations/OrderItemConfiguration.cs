@@ -20,18 +20,17 @@ namespace CoffeeShop.Database.Configurations
 
             builder.OwnsOne(oi => oi.Item, a =>
             {
+                a.Property(io => io.CoffeeItemId)
+                    .IsRequired()
+                    .HasColumnType("int");
+
                 a.Property(io => io.ItemName)
                     .IsRequired()
                     .HasColumnType("nvarchar(100)");
 
                 a.Property(io => io.PictureUri)
+                    .IsRequired()
                     .HasColumnType("nvarchar(265)");
-
-                a.Property(io => io.Option)
-                    .HasColumnType("nvarchar(100)");
-
-                a.Property(io => io.Choices)
-                    .HasColumnType("nvarchar(100)");
             });
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace CoffeeShop.Features.Coffee;
 
-public class ItemDTO
+public class CoffeeDTO
 {
     public string Name { get; set; }
     public string Description { get; set; }

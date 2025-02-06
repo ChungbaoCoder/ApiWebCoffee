@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CoffeeShop.Database.Configurations;
 
-public class BasketConfiguration : IEntityTypeConfiguration<BuyerBasket>
+public class BuyerBasketConfiguration : IEntityTypeConfiguration<BuyerBasket>
 {
     public void Configure(EntityTypeBuilder<BuyerBasket> builder)
     {
@@ -15,9 +15,5 @@ public class BasketConfiguration : IEntityTypeConfiguration<BuyerBasket>
         builder.HasMany(b => b.Items)
             .WithOne(bi => bi.Basket)
             .HasForeignKey(bi => bi.BasketId);
-
-        builder.Property(b => b.BuyerId)
-            .IsRequired()
-            .HasColumnType("int");
     }
 }

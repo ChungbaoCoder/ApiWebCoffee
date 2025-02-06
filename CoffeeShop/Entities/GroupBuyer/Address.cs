@@ -14,10 +14,9 @@ public class Address
 
     private Address() { }
 
-    public Address(int buyerId, string street, string city, string state, string country, bool isDefault)
+    public Address(int buyerId, string street, string city, string state, string country)
     {
         UpdateAddress(street, city, state, country);
-        SetDefault(isDefault);
     }
 
     public void UpdateAddress(string street, string city, string state, string country)

@@ -18,6 +18,10 @@ public class CoffeeItemConfiguration : IEntityTypeConfiguration<CoffeeItem>
             .IsRequired()
             .HasColumnType("nvarchar(200)");
 
+        builder.Property(ci => ci.Category)
+            .IsRequired()
+            .HasColumnType("nvarchar(50)");
+
         builder.Property(ci => ci.Price)
             .IsRequired()
             .HasColumnType("decimal(18,2)");
@@ -26,31 +30,8 @@ public class CoffeeItemConfiguration : IEntityTypeConfiguration<CoffeeItem>
             .IsRequired()
             .HasColumnType("nvarchar(50)");
 
-        builder.Property(ci => ci.Category)
-            .IsRequired()
-            .HasColumnType("nvarchar(100)");
-
         builder.Property(ci => ci.PictureUri)
             .IsRequired()
-            .HasColumnType("varchar(265)");
-
-        builder.OwnsOne(ci => ci.Customization, a =>
-        {
-            a.Property(c => c.Option)
-                .HasColumnType("nvarchar(100)");
-
-            a.Property(c => c.Choices)
-                .HasColumnType("nvarchar(100)");
-        });
-
-        builder.OwnsOne(ci => ci.Availability, a =>
-        {
-            a.Property(a => a.InStock)
-                .IsRequired()
-                .HasColumnType("bit");
-
-            a.Property(a => a.NextBatchTime)
-                .HasColumnType("datetime");
-        });
+            .HasColumnType("nvarchar(255)");
     }
 }

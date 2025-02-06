@@ -2,20 +2,34 @@
 
 public class Availability
 {
-    public bool InStock { get; private set; }
-    public DateTime? NextBatchTime { get; private set; }
+    public int AvailabilityId { get; private set; }
+    public int StockQuantity {  get; private set; }
+    public bool AvailableStatus { get; private set; }
+    public DateTime? RestockDate { get; private set; }
+
+    public int CoffeeItemId { get; private set; }
+    public CoffeeItem CoffeeItem { get; private set; }
 
     private Availability() { }
 
-    public Availability(bool inStock, DateTime nextBatchTime)
+    public Availability(int stockQuantity,bool availableStatus, DateTime? restockDate)
     {
-        InStock = inStock;
-        NextBatchTime = nextBatchTime;
+        StockQuantity = stockQuantity;
+        AvailableStatus = availableStatus;
+        RestockDate = restockDate;
     }
 
-    //public void UpdateAvailbility(bool inStock, DateTime nextBatchTime)
-    //{
-    //    InStock = inStock;
-    //    NextBatchTime = nextBatchTime;
-    //}
+    public void UpdateQuantity(int stockQuantity)
+    {
+        if (StockQuantity < 1 || StockQuantity > 99)
+            throw new ArgumentOutOfRangeException(nameof(stockQuantity), "Số lượng sản phẩm phải từ 1 - 99.");
+
+        StockQuantity = stockQuantity;
+    }
+
+    public void UpdateStatus(bool availableStatus, DateTime? restockDate)
+    {
+        AvailableStatus = availableStatus;
+        RestockDate = restockDate;
+    }
 }

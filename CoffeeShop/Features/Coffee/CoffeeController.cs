@@ -29,10 +29,10 @@ public class CoffeeController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> Add(ItemDTO item)
+    public async Task<ActionResult> Add(CoffeeDTO item)
     {
-        CoffeeItem coffee = new CoffeeItem(item.Name, item.Description, item.Category, item.Price, item.Size, item.PictureUri, new Customization(item.Option, item.Choices), new Availability(item.InStock, item.NextBatchTime));
-        var result = await _coffeeService.Create(coffee);
+        //CoffeeItem coffee = new CoffeeItem(item.Name, item.Description, item.Category, item.Price, item.Size, item.PictureUri, new Customization(item.Option, item.Choices), new Availability(item.InStock, item.NextBatchTime));
+        //var result = await _coffeeService.Create(coffee);
         return Ok();
     }
 

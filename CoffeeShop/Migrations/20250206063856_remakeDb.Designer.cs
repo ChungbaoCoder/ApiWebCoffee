@@ -4,6 +4,7 @@ using CoffeeShop.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoffeeShop.Migrations
 {
     [DbContext(typeof(CoffeeDbContext))]
-    partial class CoffeeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250206063856_remakeDb")]
+    partial class remakeDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -149,7 +152,7 @@ namespace CoffeeShop.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("RestockDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
@@ -215,15 +218,15 @@ namespace CoffeeShop.Migrations
 
                     b.Property<string>("MilkType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SugarLevel")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Temperature")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Topping")
                         .IsRequired()

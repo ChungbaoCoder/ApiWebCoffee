@@ -37,11 +37,11 @@ public class Buyer
         DateUpdated = DateTime.Now;
     }
 
-    public void UpdateAddress(int addressId, string street, string city, string state, string country, bool isDefault)
+    public void UpdateAddress(int addressId, string street, string city, string state, string country)
     {
         if (!Address.Any(a => a.AddressId == addressId))
         {
-            _address.Add(new Address(BuyerId, street, city, state, country, isDefault));
+            _address.Add(new Address(BuyerId, street, city, state, country));
             return;
         }
         var existAddress = Address.First(a => a.AddressId == addressId);
@@ -63,6 +63,14 @@ public class Buyer
             }
         }
         DateUpdated = DateTime.Now;
+    }
+
+    public void RemoveAddress(int addressId)
+    {
+        var existAddress = _address.FirstOrDefault(a => a.AddressId == addressId);
+
+        if (existAddress != null)
+            _address.Remove(existAddress);
     }
 
     //public void AddPaymentMethod(PaymentMethod paymentMethod)

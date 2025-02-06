@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CoffeeShop.Database.Configurations;
 
-public class OrderConfiguration : IEntityTypeConfiguration<BuyerOrder>
+public class BuyerOrderConfiguration : IEntityTypeConfiguration<BuyerOrder>
 {
     public void Configure(EntityTypeBuilder<BuyerOrder> builder)
     {
