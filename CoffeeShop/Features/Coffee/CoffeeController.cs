@@ -15,31 +15,102 @@ public class CoffeeController : Controller
     }
 
     [HttpGet]
-    public async Task<List<CoffeeItem>> GetList()
+    public async Task<IActionResult> GetListCoffee(int page, int pageSize)
     {
-        var result = await _coffeeService.List();
-        return result;
+        if (page <= 0 || pageSize <= 0)
+            return BadRequest(new Response<object>("Số lượng danh sách phải là số dương.", 400));
+
+        var coffeeItems = await _coffeeService.ListItem(page, pageSize);
+
+        if (coffeeItems == null || coffeeItems.Count == 0)
+            return NotFound(new Response<object>("Danh sách sản phẩm không tìm thấy.", 404));
+
+        return Ok(new Response<List<CoffeeItem>>(coffeeItems, "Trả về danh sách sản phẩm thành công."));
     }
 
-    [HttpGet("{int:id}")]
-    public async Task<ActionResult> GetById(int id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetCoffeeItemById(int id)
     {
+        var coffeeItem = await _coffeeService.GetById(id);
 
-        return Ok();
+        if (coffeeItem == null)
+            return NotFound(new Response<object>("Sản phẩm không tìm thấy.", 404));
+
+        return Ok(new Response<CoffeeItem>(coffeeItem, "Trả về sản phẩm thành công."));
     }
 
-    [HttpPost]
-    public async Task<ActionResult> Add(CoffeeDTO item)
+    [HttpPost("Create")]
+    public async Task<IActionResult> CreateCoffeeItem([FromBody] CoffeeItemRequest request)
     {
-        //CoffeeItem coffee = new CoffeeItem(item.Name, item.Description, item.Category, item.Price, item.Size, item.PictureUri, new Customization(item.Option, item.Choices), new Availability(item.InStock, item.NextBatchTime));
-        //var result = await _coffeeService.Create(coffee);
-        return Ok();
+        if (!ModelState.IsValid)
+            return BadRequest(new Response<object>("Dữ liệu không hợp lệ."));
+
+        try
+        {
+            var coffeeItem = new CoffeeItem(
+                request.Name,
+                request.Description,
+                request.Category,
+                request.Price,
+                request.Size,
+                request.PictureUri,
+                new Availability(request.StockQuantity, request.AvailabilityStatus, request.RestockDate),
+                new Customization(request.MilkType, request.SugarLevel, request.Temperature, request.Topping, request.Flavor)
+            );
+
+            var result = await _coffeeService.CreateItem(coffeeItem);
+
+            if (result == null)
+                return StatusCode(500, new Response<object>("Xảy ra sự cố khi tạo mới sản phẩm.", 500));
+
+            return Ok(new Response<CoffeeItem>(result, "Sản phẩm tạo ra thành công.", 201));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new Response<object>($"Sự cố xảy ra: {ex.Message}", 500));
+        }
     }
 
-    [HttpDelete("{int:id}")]
-    public async Task<ActionResult> DeleteItem(int id)
+    [HttpPut("Update")]
+    public async Task<IActionResult> UpdateCoffeeItem([FromBody] CoffeeItemRequest request)
     {
-        await _coffeeService.Delete(id);
-        return Ok();
+        if (!ModelState.IsValid)
+            return BadRequest(new Response<object>("Dữ liệu không hợp lệ."));
+
+        try
+        {
+            var coffeeItem = new CoffeeItem(
+                request.Name,
+                request.Description,
+                request.Category,
+                request.Price,
+                request.Size,
+                request.PictureUri,
+                new Availability(request.StockQuantity, request.AvailabilityStatus, request.RestockDate),
+                new Customization(request.MilkType, request.SugarLevel, request.Temperature, request.Topping, request.Flavor)
+            );
+
+            var result = await _coffeeService.UpdateItem(coffeeItem);
+
+            if (result == null)
+                return StatusCode(404, new Response<object>("Không thể tìm thấy sản phẩm để cập nhật.", 404));
+
+            return Ok(new Response<CoffeeItem>(result, "Cập nhật sản phẩm thành công."));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new Response<object>($"Sự cố xảy ra: {ex.Message}", 500));
+        }
+    }
+
+    [HttpDelete("Delete/{id}")]
+    public async Task<IActionResult> DeleteCoffeeItem(int id)
+    {
+        var result = await _coffeeService.DeleteItem(id);
+
+        if (result == false)
+            return NotFound(new Response<object>("Không thể tìm thấy sản phẩm để xóa.", 404));
+
+        return Ok(new Response<bool>(result, "Sản phẩm được xóa thành công."));
     }
 }

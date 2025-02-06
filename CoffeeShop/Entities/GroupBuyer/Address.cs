@@ -10,7 +10,7 @@ public class Address
     public bool IsDefault { get; private set; }
 
     public int BuyerId { get; private set; }
-    public Buyer Buyer { get; private set; }
+    public BuyerUser Buyer { get; private set; }
 
     private Address() { }
 

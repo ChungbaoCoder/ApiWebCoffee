@@ -10,6 +10,8 @@ public class BasketItem
     public int BasketId { get; private set; }
     public BuyerBasket Basket { get; private set; }
 
+    private BasketItem() { }
+
     public BasketItem(int basketId, int coffeeItemId, decimal price, int quantity)
     {
         BasketId = basketId;

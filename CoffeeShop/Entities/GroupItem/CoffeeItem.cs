@@ -14,7 +14,7 @@ public class CoffeeItem
 
     private CoffeeItem() { }
 
-    public CoffeeItem(string name, string description, string category, decimal price, string size, string pictureUri, Customization customization, Availability availability)
+    public CoffeeItem(string name, string description, string category, decimal price, string size, string pictureUri, Availability availability, Customization customization)
     {
         Name = name;
         Description = description;
@@ -22,8 +22,17 @@ public class CoffeeItem
         Price = price;
         Size = size;
         PictureUri = pictureUri;
-        Customization = customization;
         Availability = availability;
+        Customization = customization;
+    }
+
+    public void UpdateItem(string name, string description, string category, string size, string pictureUri)
+    {
+        Name = name;
+        Description = description;
+        Category = category;
+        Size = size;
+        PictureUri = pictureUri;
     }
 
     public void UpdatePrice(decimal newPrice)
@@ -32,25 +41,5 @@ public class CoffeeItem
             throw new ArgumentOutOfRangeException(nameof(newPrice), "Gía phải lớn hơn 0.");
 
         Price = newPrice;
-    }
-
-    public void UpdateQuantity(int quantity)
-    {
-        Availability.UpdateQuantity(quantity);
-    }
-
-    public void UpdateStatus(bool availableStatus, DateTime restockDate)
-    {
-        Availability.UpdateStatus(availableStatus, restockDate);
-    }
-
-    public void AddTopping(string topping)
-    {
-        Customization.AddTopping(topping);
-    }
-
-    public void AddFlavor(string flavor)
-    {
-        Customization.AddFlavor(flavor);
     }
 }

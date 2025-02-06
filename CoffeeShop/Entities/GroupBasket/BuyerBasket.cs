@@ -10,7 +10,9 @@ public class BuyerBasket
     public IReadOnlyCollection<BasketItem> Items => _items.AsReadOnly();
 
     public int BuyerId { get; private set; }
-    public Buyer Buyer { get; private set; }
+    public BuyerUser Buyer { get; private set; }
+
+    private BuyerBasket() { }
 
     public BuyerBasket(int buyerId)
     {
@@ -21,13 +23,15 @@ public class BuyerBasket
 
     public void AddItem(int coffeeItemId, decimal price, int quantity)
     {
-        if (!Items.Any(i => i.BasketItemId == coffeeItemId))
+        if (Items.Any(i => i.BasketItemId == coffeeItemId))
+        {
+            var existItem = Items.First(i => i.CoffeeItemId == coffeeItemId);
+            existItem.AddQuantity(quantity);
+        }
+        else
         {
             _items.Add(new BasketItem(BasketId, coffeeItemId, price, quantity));
-            return;
         }
-        var existItem = Items.First(i => i.CoffeeItemId == coffeeItemId);
-        existItem.AddQuantity(quantity);
     }
 
     public void RemoveEmptyItem()

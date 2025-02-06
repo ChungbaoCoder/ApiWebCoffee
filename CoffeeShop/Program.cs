@@ -1,6 +1,6 @@
 using CoffeeShop.Database;
 using CoffeeShop.Features.Basket;
-using CoffeeShop.Features.BuyerUser;
+using CoffeeShop.Features.Buyer;
 using CoffeeShop.Features.Coffee;
 using CoffeeShop.Features.Order;
 using CoffeeShop.Infrastructure.Auth;

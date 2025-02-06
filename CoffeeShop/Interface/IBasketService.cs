@@ -4,7 +4,8 @@ namespace CoffeeShop.Interface;
 
 public interface IBasketService
 {
-    Task CreateBasketForUser();
-    Task<BuyerBasket> AddItemToBasket(int buyer, int catalogItemId, decimal price, int quantity = 1);
-    Task DeleteBasketAsync(int basketId);
+    Task<BuyerBasket> CreateBasketForUser(int buyerId);
+    Task<BuyerBasket> AddItemToBasket(int buyerId, int coffeeItemId, decimal price, int quantity = 1);
+    Task<BuyerBasket> ClearBasket(int basketId);
+    Task<bool> DeleteBasket(int  basketId);
 }

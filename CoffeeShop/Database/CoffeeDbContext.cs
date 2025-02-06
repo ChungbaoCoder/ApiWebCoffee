@@ -18,7 +18,7 @@ public class CoffeeDbContext : DbContext
     public DbSet<BasketItem> BasketItems { get; set; }
     public DbSet<BuyerOrder> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-    public DbSet<Buyer> Buyer { get; set; }
+    public DbSet<BuyerUser> Buyer { get; set; }
     public DbSet<Address> Address { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

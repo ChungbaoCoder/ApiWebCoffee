@@ -13,9 +13,4 @@ public class UserService : IUserService
     {
         _userManager = userManager;
     }
-
-    public Task RegisterUser(Buyer buyer)
-    {
-        throw new NotImplementedException();
-    }
 }

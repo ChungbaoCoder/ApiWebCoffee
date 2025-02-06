@@ -4,9 +4,9 @@ namespace CoffeeShop.Interface;
 
 public interface ICoffeeItemService
 {
-    Task<CoffeeItem> Create(CoffeeItem item);
-    Task<CoffeeItem> Update(CoffeeItem item);
-    Task<CoffeeItem> Delete(int coffeeItemId);
+    Task<CoffeeItem> CreateItem(CoffeeItem item);
+    Task<CoffeeItem> UpdateItem(CoffeeItem item);
+    Task<bool> DeleteItem(int coffeeItemId);
     Task<CoffeeItem> GetById(int coffeeItemId);
-    Task<List<CoffeeItem>> List();
+    Task<List<CoffeeItem>> ListItem(int page, int pageSize);
 }

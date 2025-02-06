@@ -3,7 +3,7 @@ using CoffeeShop.Entities.GroupOrder;
 
 namespace CoffeeShop.Entities.GroupBuyer;
 
-public class Buyer
+public class BuyerUser
 {
     public int BuyerId { get; private set; }
     public string? UserGuid { get; private set; }
@@ -22,9 +22,9 @@ public class Buyer
     //private List<PaymentMethod> _paymentMethods = new List<PaymentMethod>();
     //public IReadOnlyCollection<PaymentMethod> PaymentMethods => _paymentMethods.AsReadOnly();
 
-    private Buyer() { }
+    private BuyerUser() { }
 
-    public Buyer(string name, string email)
+    public BuyerUser(string name, string email)
     {
         Name = name;
         Email = email;

@@ -30,6 +30,13 @@ public class Customization
         return list?.Any() == true ? list.ToList() : new List<string> { "none" };
     }
 
+    public void UpdateCustomization(string milkType, string sugarLevel, string temperature)
+    {
+        MilkType = milkType;
+        SugarLevel = sugarLevel;
+        Temperature = temperature;
+    }
+
     public void AddTopping(string topping)
     {
         if (string.IsNullOrWhiteSpace(topping))
@@ -46,5 +53,17 @@ public class Customization
 
         _flavor.RemoveAll(f => string.IsNullOrWhiteSpace(f) || f.Equals("none", StringComparison.OrdinalIgnoreCase));
         _flavor.Add(flavor);
+    }
+
+    public void RemoveTopping(string topping)
+    {
+        if (_topping.Contains(topping))
+            _topping.Remove(topping);
+    }
+
+    public void RemoveFlavor(string flavor)
+    {
+        if (_flavor.Contains(flavor))
+            _flavor.Remove(flavor);
     }
 }
