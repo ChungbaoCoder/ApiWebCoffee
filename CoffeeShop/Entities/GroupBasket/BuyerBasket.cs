@@ -34,7 +34,13 @@ public class BuyerBasket
         }
     }
 
-    public void RemoveEmptyItem()
+    public void RemoveItem(int basketItemId)
+    {
+        var item = Items.First(i => i.BasketItemId == basketItemId);
+        _items.Remove(item);
+    }
+
+    public void ClearBasket()
     {
         _items.RemoveAll(i => i.Quantity == 0);
     }

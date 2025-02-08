@@ -19,6 +19,7 @@ public class BuyerUser
     private List<BuyerOrder> _order = new List<BuyerOrder>();
     public IReadOnlyCollection<BuyerOrder> Order => _order.AsReadOnly();
 
+    //Dành cho tương lai thêm chức năng thanh toán
     //private List<PaymentMethod> _paymentMethods = new List<PaymentMethod>();
     //public IReadOnlyCollection<PaymentMethod> PaymentMethods => _paymentMethods.AsReadOnly();
 

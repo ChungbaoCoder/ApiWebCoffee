@@ -2,5 +2,5 @@
 
 public class PaymentMethod
 {
-    //TODO đặt cho thẻ trong tương lai
+    //Đặt cho chức năng thanh toán trong tương lai
 }

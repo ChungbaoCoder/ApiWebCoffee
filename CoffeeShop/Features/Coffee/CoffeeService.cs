@@ -16,9 +16,6 @@ public class CoffeeService : ICoffeeItemService
 
     public async Task<CoffeeItem> CreateItem(CoffeeItem item)
     {
-        if (item == null)
-            throw new ArgumentNullException(nameof(item));
-
         _context.CoffeeItems.Add(item);
         await _context.SaveChangesAsync();
         return item;
@@ -26,24 +23,24 @@ public class CoffeeService : ICoffeeItemService
 
     public async Task<bool> DeleteItem(int coffeeItemId)
     {
-        var existItem = await _context.CoffeeItems.FindAsync(coffeeItemId);
+        var item = await _context.CoffeeItems.FindAsync(coffeeItemId);
 
-        if (existItem == null)
+        if (item == null)
             return false;
 
-        _context.CoffeeItems.Remove(existItem);
+        _context.CoffeeItems.Remove(item);
         await _context.SaveChangesAsync();
         return true;
     }
 
     public async Task<CoffeeItem> GetById(int coffeeItemId)
     {
-        var existItem = await _context.CoffeeItems.FindAsync(coffeeItemId);
+        var item = await _context.CoffeeItems.FindAsync(coffeeItemId);
 
-        if (existItem == null)
+        if (item == null)
             return null;
 
-        return existItem;
+        return item;
     }
 
     public async Task<List<CoffeeItem>> ListItem(int page, int pageSize)
@@ -52,19 +49,20 @@ public class CoffeeService : ICoffeeItemService
         if (pageSize < 1) pageSize = 10;
 
         var items = await _context.CoffeeItems
-        .Skip((page - 1) * pageSize)
-        .Take(pageSize)
-        .ToListAsync();
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
 
         return items;
     }
 
-    public async Task<CoffeeItem> UpdateItem(CoffeeItem item)
+    public async Task<CoffeeItem> UpdateItem(int coffeeItemId, CoffeeItem item)
     {
         if (item == null)
-            throw new ArgumentNullException(nameof(item), "Coffee item cannot be null");
+            throw new ArgumentNullException(nameof(item), "Sản phẩm không có dữ liệu");
 
-        var existItem = await _context.CoffeeItems.FindAsync(item.CoffeeItemId);
+        var existItem = await _context.CoffeeItems.FindAsync(coffeeItemId);
+
         if (existItem == null)
             return null;
 

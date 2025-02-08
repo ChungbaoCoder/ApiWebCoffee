@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CoffeeShop.Entities.GroupItem;
 
 namespace CoffeeShop.Features.Coffee;
 

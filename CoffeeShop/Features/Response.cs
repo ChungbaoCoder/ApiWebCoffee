@@ -2,24 +2,26 @@
 
 public class Response<T>
 {
-    public string Message { get; set; }
+    public string Type { get; set; }
+    public string Title { get; set; }
     public int StatusCode { get; set; }
-    public bool Success { get; set; }
+    public string Detail { get; set; }
     public T Data { get; set; }
 
-    public Response(T data, string message = "Request was successful.", int statusCode = 200)
+    public Response(T data, string type, string title, string message, int statusCode = 200)
     {
-        Data = data;
-        Message = message;
+        Type = type;
+        Title = title;
         StatusCode = statusCode;
-        Success = true;
+        Detail = message;
+        Data = data;
     }
 
-    public Response(string message, int statusCode = 400)
+    public Response(string type, string title, string message, int statusCode = 400)
     {
-        Data = default;
-        Message = message;
+        Type = type;
+        Title = title;
         StatusCode = statusCode;
-        Success = false;
+        Detail = message;
     }
 }

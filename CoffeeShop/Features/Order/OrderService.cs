@@ -14,7 +14,7 @@ public class OrderService : IOrderService
         _context = context;
     }
 
-    public async Task<bool> CancelOrder(int orderId)
+    public async Task<bool> DeleteOrder(int orderId)
     {
         var order = await _context.Orders.FindAsync(orderId);
 
@@ -31,7 +31,7 @@ public class OrderService : IOrderService
         var basket = await _context.Baskets.FirstOrDefaultAsync(b => b.BuyerId == buyerId && b.BasketId == basketId);
 
         if (basket == null)
-            throw new ArgumentNullException(nameof(basket));
+            return null;
 
         List<OrderItem> orderItems = new List<OrderItem>();
 

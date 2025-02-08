@@ -18,14 +18,14 @@ public class CoffeeController : Controller
     public async Task<IActionResult> GetListCoffee(int page, int pageSize)
     {
         if (page <= 0 || pageSize <= 0)
-            return BadRequest(new Response<object>("Số lượng danh sách phải là số dương.", 400));
+            return BadRequest(new Response<object>(RequestMessage.Text("Lấy danh sách cà phê"), "Bad Request", "Số sản phẩm và số trang cần hiển thị phải là số dương."));
 
         var coffeeItems = await _coffeeService.ListItem(page, pageSize);
 
         if (coffeeItems == null || coffeeItems.Count == 0)
-            return NotFound(new Response<object>("Danh sách sản phẩm không tìm thấy.", 404));
+            return NotFound(new Response<object>(RequestMessage.Text("Lấy danh sách cà phê"), "Not Found", "Danh sách sản phẩm không tìm thấy.", 404));
 
-        return Ok(new Response<List<CoffeeItem>>(coffeeItems, "Trả về danh sách sản phẩm thành công."));
+        return Ok(new Response<List<CoffeeItem>>(coffeeItems, RequestMessage.Text("Lấy danh sách cà phê"), "Ok", "Trả về danh sách sản phẩm thành công."));
     }
 
     [HttpGet("{id}")]
@@ -34,16 +34,16 @@ public class CoffeeController : Controller
         var coffeeItem = await _coffeeService.GetById(id);
 
         if (coffeeItem == null)
-            return NotFound(new Response<object>("Sản phẩm không tìm thấy.", 404));
+            return NotFound(new Response<object>(RequestMessage.Text("Lấy cà phê bằng id"), "Not Found", "Sản phẩm không tìm thấy.", 404));
 
-        return Ok(new Response<CoffeeItem>(coffeeItem, "Trả về sản phẩm thành công."));
+        return Ok(new Response<CoffeeItem>(coffeeItem, RequestMessage.Text("Lấy cà phê bằng id"), "Ok", "Trả về sản phẩm thành công."));
     }
 
     [HttpPost("Create")]
     public async Task<IActionResult> CreateCoffeeItem([FromBody] CoffeeItemRequest request)
     {
         if (!ModelState.IsValid)
-            return BadRequest(new Response<object>("Dữ liệu không hợp lệ."));
+            return BadRequest(new Response<object>(RequestMessage.Text("Tạo cà phê"), "Bad Request", "Dữ liệu không hợp lệ."));
 
         try
         {
@@ -59,23 +59,19 @@ public class CoffeeController : Controller
             );
 
             var result = await _coffeeService.CreateItem(coffeeItem);
-
-            if (result == null)
-                return StatusCode(500, new Response<object>("Xảy ra sự cố khi tạo mới sản phẩm.", 500));
-
-            return Ok(new Response<CoffeeItem>(result, "Sản phẩm tạo ra thành công.", 201));
+            return Ok(new Response<CoffeeItem>(result, RequestMessage.Text("Tạo cà phê"), "Created", "Sản phẩm tạo ra thành công.", 201));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new Response<object>($"Sự cố xảy ra: {ex.Message}", 500));
+            return StatusCode(500, new Response<object>(RequestMessage.Text("Tạo cà phê"), "Internal Server Error", $"Lỗi: {ex.Message}.", 500));
         }
     }
 
-    [HttpPut("Update")]
-    public async Task<IActionResult> UpdateCoffeeItem([FromBody] CoffeeItemRequest request)
+    [HttpPut("Update/{id}")]
+    public async Task<IActionResult> UpdateCoffeeItem(int id, [FromBody] CoffeeItemRequest request)
     {
         if (!ModelState.IsValid)
-            return BadRequest(new Response<object>("Dữ liệu không hợp lệ."));
+            return BadRequest(new Response<object>(RequestMessage.Text("Cập nhật cà phê"), "Bad Request", "Dữ liệu không hợp lệ."));
 
         try
         {
@@ -90,16 +86,16 @@ public class CoffeeController : Controller
                 new Customization(request.MilkType, request.SugarLevel, request.Temperature, request.Topping, request.Flavor)
             );
 
-            var result = await _coffeeService.UpdateItem(coffeeItem);
+            var result = await _coffeeService.UpdateItem(id, coffeeItem);
 
             if (result == null)
-                return StatusCode(404, new Response<object>("Không thể tìm thấy sản phẩm để cập nhật.", 404));
+                return StatusCode(404, new Response<object>(RequestMessage.Text("Cập nhật cà phê"), "Not Found", "Sản phẩm không tìm thấy.", 404));
 
-            return Ok(new Response<CoffeeItem>(result, "Cập nhật sản phẩm thành công."));
+            return Ok(new Response<CoffeeItem>(result, RequestMessage.Text("Cập nhật cà phê"), "No Content", "Cập nhật sản phẩm thành công.", 204));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new Response<object>($"Sự cố xảy ra: {ex.Message}", 500));
+            return StatusCode(500, new Response<object>(RequestMessage.Text("Cập nhật cà phê"), "Internal Server Error", $"Lỗi: {ex.Message}.", 500));
         }
     }
 
@@ -109,8 +105,8 @@ public class CoffeeController : Controller
         var result = await _coffeeService.DeleteItem(id);
 
         if (result == false)
-            return NotFound(new Response<object>("Không thể tìm thấy sản phẩm để xóa.", 404));
+            return StatusCode(404, new Response<object>(RequestMessage.Text("Xóa cà phê bằng id"), "Not Found", "Sản phẩm không tìm thấy.", 404));
 
-        return Ok(new Response<bool>(result, "Sản phẩm được xóa thành công."));
+        return Ok(new Response<object>(RequestMessage.Text("Xóa cà phê bằng id"), "No Content", "Xóa sản phẩm thành công.", 204));
     }
 }

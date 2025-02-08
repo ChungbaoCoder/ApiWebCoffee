@@ -15,26 +15,26 @@ public class BasketService : IBasketService
 
     public async Task<BuyerBasket> AddItemToBasket(int buyerId, int coffeeItemId, decimal price, int quantity = 1)
     {
-        var existBasket = await _context.Baskets.FirstOrDefaultAsync(b => b.BuyerId == buyerId);
+        var basket = await _context.Baskets.FirstOrDefaultAsync(b => b.BuyerId == buyerId);
 
-        if (existBasket == null)
-            throw new InvalidOperationException("Không tìm thấy được giỏ hàng cho người dùng.");
+        if (basket == null)
+            return null;
 
-        existBasket.AddItem(coffeeItemId, price, quantity);
+        basket.AddItem(coffeeItemId, price, quantity);
         await _context.SaveChangesAsync();
-        return existBasket;
+        return basket;
     }
 
-    public async Task<BuyerBasket> ClearBasket(int basketId)
+    public async Task<BuyerBasket> RemoveItemFromBasket(int basketId, int basketItemId)
     {
-        var existBasket = await _context.Baskets.FirstOrDefaultAsync(b => b.BasketId == basketId);
+        var basket = await _context.Baskets.FirstOrDefaultAsync(b => b.BasketId == basketId);
 
-        if (existBasket == null)
-            throw new InvalidOperationException("Không tìm thấy giỏ hàng.");
+        if (basket == null)
+            return null;
 
-        existBasket.RemoveEmptyItem();
+        basket.RemoveItem(basketItemId);
         await _context.SaveChangesAsync();
-        return existBasket;
+        return basket;
     }
 
     public async Task<BuyerBasket> CreateBasketForUser(int buyerId)
@@ -59,5 +59,17 @@ public class BasketService : IBasketService
         _context.Baskets.Remove(existBasket);
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<BuyerBasket> ClearBasket(int basketId)
+    {
+        var basket = await _context.Baskets.FirstOrDefaultAsync(b => b.BasketId == basketId);
+
+        if (basket == null)
+            return null;
+
+        basket.ClearBasket();
+        await _context.SaveChangesAsync();
+        return basket;
     }
 }

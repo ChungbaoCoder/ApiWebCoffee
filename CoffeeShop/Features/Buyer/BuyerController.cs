@@ -1,5 +1,4 @@
 ﻿using CoffeeShop.Entities.GroupBuyer;
-using CoffeeShop.Features.Coffee;
 using CoffeeShop.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,9 +20,9 @@ public class BuyerController : Controller
         var buyers = await _buyerService.ListBuyer();
 
         if (buyers == null || buyers.Count == 0)
-            return NotFound(new Response<object>("Danh sách người mua không tìm thấy.", 404));
+            return NotFound(new Response<object>(RequestMessage.Text("Lấy danh sách người mua"), "Not Found", "Danh sách người mua không tìm thấy.", 404));
 
-        return Ok(new Response<List<BuyerUser>>(buyers, "Trả về danh sách người mua thành công."));
+        return Ok(new Response<List<BuyerUser>>(buyers, RequestMessage.Text("Lấy danh sách người mua"), "Ok", "Trả về danh sách người mua thành công."));
     }
 
     [HttpGet("{id}")]
@@ -32,50 +31,46 @@ public class BuyerController : Controller
         var buyer = await _buyerService.GetBuyerById(id);
 
         if (buyer == null)
-            return NotFound(new Response<object>("người mua không tìm thấy.", 404));
+            return NotFound(new Response<object>(RequestMessage.Text("Lấy người mua bằng id"), "Not Found", "Người mua không tìm thấy.", 404));
 
-        return Ok(new Response<BuyerUser>(buyer, "Trả về người mua thành công."));
+        return Ok(new Response<BuyerUser>(buyer, RequestMessage.Text("Lấy người mua bằng id"), "Ok", "Trả về người mua thành công."));
     }
 
     [HttpPost("Create")]
     public async Task<IActionResult> CreateBuyer([FromBody] BuyerRequest request)
     {
         if (!ModelState.IsValid)
-            return BadRequest(new Response<object>("Dữ liệu không hợp lệ.", 400));
+            return BadRequest(new Response<object>(RequestMessage.Text("Tạo người mua"), "Bad Request", "Dữ liệu không hợp lệ."));
 
         try
         {
-            var buyer = await _buyerService.CreateBuyer(request.Name, request.Email);
-
-            if (buyer == null)
-                return StatusCode(500, new Response<object>("Lỗi tạo mới người mua.", 500));
-
-            return Ok(new Response<BuyerUser>(buyer, "Tạo mới người dùng thành công.", 201));
+            var result = await _buyerService.CreateBuyer(request.Name, request.Email);
+            return Ok(new Response<BuyerUser>(result, RequestMessage.Text("Tạo người mua"), "Created", "Người mua tạo ra thành công.", 201));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new Response<object>($"Sự cố xảy ra: {ex.Message}", 500));
+            return StatusCode(500, new Response<object>(RequestMessage.Text("Tạo người mua"), "Internal Server Error", $"Lỗi: {ex.Message}.", 500));
         }
     }
 
-    [HttpPut("Update")]
-    public async Task<IActionResult> UpdateBuyer(int buyerId, [FromBody] BuyerRequest request)
+    [HttpPut("Update/{id}")]
+    public async Task<IActionResult> UpdateBuyer(int id, [FromBody] BuyerRequest request)
     {
         if (!ModelState.IsValid)
-            return BadRequest(new Response<object>("Dữ liệu không hợp lệ."));
+            return BadRequest(new Response<object>(RequestMessage.Text("Cập nhật người mua"), "Bad Request", "Dữ liệu không hợp lệ."));
 
         try
         {
-            var result = await _buyerService.UpdateBuyer(buyerId, request.Name, request.Email);
+            var result = await _buyerService.UpdateBuyer(id, request.Name, request.Email);
 
             if (result == null)
-                return StatusCode(404, new Response<object>("Không thể tìm thấy nguời mua để cập nhật.", 404));
+                return StatusCode(404, new Response<object>(RequestMessage.Text("Cập nhật người mua"), "Not Found", "Người mua không tìm thấy.", 404));
 
-            return Ok(new Response<BuyerUser>(result, "Cập nhật người mua thành công."));
+            return Ok(new Response<BuyerUser>(result, RequestMessage.Text("Cập nhật người mua"), "No Content", "Cập nhật người mua thành công.", 204));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new Response<object>($"Sự cố xảy ra: {ex.Message}", 500));
+            return StatusCode(500, new Response<object>(RequestMessage.Text("Cập nhật người mua"), "Internal Server Error", $"Lỗi: {ex.Message}.", 500));
         }
     }
 
@@ -85,8 +80,8 @@ public class BuyerController : Controller
         var result = await _buyerService.DeleteBuyer(id);
 
         if (result == false)
-            return NotFound(new Response<object>("Không thể tìm thấy người mua để xóa.", 404));
+            return StatusCode(404, new Response<object>(RequestMessage.Text("Xóa người mua bằng id"), "Not Found", "Người mua không tìm thấy.", 404));
 
-        return Ok(new Response<bool>(result, "Người mua được xóa thành công."));
+        return Ok(new Response<object>(RequestMessage.Text("Xóa người mua bằng id"), "No Content", "Xóa người mua thành công.", 204));
     }
 }

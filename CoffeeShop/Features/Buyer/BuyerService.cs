@@ -16,37 +16,37 @@ public class BuyerService : IBuyerService
 
     public async Task<BuyerUser> CreateBuyer(string name, string email)
     {
-        var existBuyer = await _context.Buyer.FirstOrDefaultAsync(b => b.Name == name && b.Email == email);
+        var buyer = await _context.Buyer.FirstOrDefaultAsync(b => b.Name == name && b.Email == email);
 
-        if (existBuyer != null)
+        if (buyer != null)
             throw new InvalidOperationException("Người dùng với email này đã có rồi.");
 
-        var buyer = new BuyerUser(name, email);
-        await _context.Buyer.AddAsync(buyer);
+        var newBuyer = new BuyerUser(name, email);
+        await _context.Buyer.AddAsync(newBuyer);
         await _context.SaveChangesAsync();
-        return buyer;
+        return newBuyer;
     }
 
     public async Task<bool> DeleteBuyer(int buyerId)
     {
-        var existBuyer = await _context.Buyer.FindAsync(buyerId);
+        var buyer = await _context.Buyer.FindAsync(buyerId);
 
-        if (existBuyer == null)
+        if (buyer == null)
             return false;
 
-        _context.Remove(buyerId);
+        _context.Buyer.Remove(buyer);
         await _context.SaveChangesAsync();
         return true;
     }
 
     public async Task<BuyerUser> GetBuyerById(int buyerId)
     {
-        var existBuyer = await _context.Buyer.FindAsync(buyerId);
+        var buyer = await _context.Buyer.FindAsync(buyerId);
 
-        if (existBuyer == null)
+        if (buyer == null)
             return null;
 
-        return existBuyer;
+        return buyer;
     }
 
     public async Task<List<BuyerUser>> ListBuyer()
@@ -57,13 +57,13 @@ public class BuyerService : IBuyerService
 
     public async Task<BuyerUser> UpdateBuyer(int buyerId, string name, string email)
     {
-        var existBuyer = await _context.Buyer.FindAsync(buyerId);
+        var buyer = await _context.Buyer.FindAsync(buyerId);
 
-        if (existBuyer == null)
+        if (buyer == null)
             return null;
 
-        existBuyer.UpdateInfo(name, email);
+        buyer.UpdateInfo(name, email);
         await _context.SaveChangesAsync();
-        return existBuyer;
+        return buyer;
     }
 }
