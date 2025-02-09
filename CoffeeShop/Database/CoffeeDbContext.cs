@@ -9,7 +9,7 @@ namespace CoffeeShop.Database;
 
 public class CoffeeDbContext : DbContext
 {
-    public CoffeeDbContext(DbContextOptions options) : base(options)
+    public CoffeeDbContext(DbContextOptions<CoffeeDbContext> options) : base(options)
     {
     }
 

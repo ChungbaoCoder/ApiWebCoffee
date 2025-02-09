@@ -1,11 +1,13 @@
 ﻿using CoffeeShop.Entities.GroupItem;
 using CoffeeShop.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeShop.Features.Coffee;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CoffeeController : Controller
 {
     private readonly ICoffeeItemService _coffeeService;

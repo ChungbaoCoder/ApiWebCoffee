@@ -1,17 +1,14 @@
-using System.Security.Claims;
-using System.Security.Cryptography;
+using System.Text;
 using CoffeeShop.Database;
 using CoffeeShop.Features.Basket;
 using CoffeeShop.Features.Buyer;
 using CoffeeShop.Features.Coffee;
 using CoffeeShop.Features.Order;
 using CoffeeShop.Infrastructure.Auth;
+using CoffeeShop.Infrastructure.SeedData;
 using CoffeeShop.Interface;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,40 +26,41 @@ builder.Services.AddDbContext<CoffeeDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
 });
 
-//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-//    .AddEntityFrameworkStores<UserDbContext>()
-//    .AddDefaultTokenProviders();
+builder.Services.AddDbContext<AuthzDbContext>(o =>
+{
+    o.UseSqlServer(builder.Configuration.GetConnectionString("Identity"));
+});
 
-var rsaKey = RSA.Create();
-rsaKey.ImportRSAPrivateKey(File.ReadAllBytes("key"), out _);
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<AuthzDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication("JswToken")
 .AddJwtBearer("JswToken", o =>
 {
-    o.TokenValidationParameters = new TokenValidationParameters()
+    o.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateAudience = false, 
-        ValidateIssuer = false,
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
     };
+});
 
-    o.Events = new JwtBearerEvents()
+builder.Services.AddAuthorization(o =>
+{
+    o.AddPolicy("Admin", o =>
     {
-        OnMessageReceived = (ctx) =>
-        {
-            if (ctx.Request.Query.ContainsKey("t"))
-            {
-                ctx.Token = ctx.Request.Query["t"];
-            }
-            return Task.CompletedTask;
-        }
-    };
 
-    o.Configuration = new OpenIdConnectConfiguration()
+    });
+
+    o.AddPolicy("User", o =>
     {
-        SigningKeys = { new RsaSecurityKey(rsaKey) }
-    };
 
-    o.MapInboundClaims = false;
+    });
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -71,46 +69,14 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+await SeedData(app.Services);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.MapGet("/", (HttpContext ctx) => Results.Content($"{ctx.User.FindFirst("sub")?.Value ?? "empty key <br> <a href='/GetKey'>Click here to get your key</a>"} ", "text/html"));
-
-app.MapGet("/GetKey", () =>
-{
-    var handler = new JsonWebTokenHandler();
-    var key = new RsaSecurityKey(rsaKey);
-    var token = handler.CreateToken(new SecurityTokenDescriptor
-    {
-        Issuer = "https://localhost:5000",
-        Subject = new ClaimsIdentity(new[]
-        {
-            new Claim("sub", Guid.NewGuid().ToString()),
-            new Claim("name", "registerUser")
-        }),
-        SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256)
-    });
-    return token;
-});
-
-app.MapGet("/GetJWT-public", () =>
-{
-    var publicKey = RSA.Create();
-    publicKey.ImportRSAPublicKey(rsaKey.ExportRSAPublicKey(), out _);
-    var key = new RsaSecurityKey(publicKey);
-    return JsonWebKeyConverter.ConvertFromRSASecurityKey(key);
-});
-
-
-app.MapGet("/GetJWT-private", () =>
-{
-    var key = new RsaSecurityKey(rsaKey);
-    return JsonWebKeyConverter.ConvertFromRSASecurityKey(key);
-});
 
 app.UseHttpsRedirection();
 
@@ -120,3 +86,14 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+async Task SeedData(IServiceProvider serviceProvider)
+{
+    using (var scope = serviceProvider.CreateScope())
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        await SeedAdmin.SeedAdminUser(serviceProvider, userManager, roleManager);
+    }
+}
