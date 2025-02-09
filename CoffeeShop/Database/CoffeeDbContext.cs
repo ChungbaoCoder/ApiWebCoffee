@@ -4,10 +4,12 @@ using CoffeeShop.Entities.GroupItem;
 using CoffeeShop.Entities.GroupOrder;
 using CoffeeShop.Entities.GroupBuyer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using CoffeeShop.Infrastructure.Auth;
 
 namespace CoffeeShop.Database;
 
-public class CoffeeDbContext : DbContext
+public class CoffeeDbContext : IdentityDbContext<ApplicationUser>
 {
     public CoffeeDbContext(DbContextOptions<CoffeeDbContext> options) : base(options)
     {
@@ -23,8 +25,7 @@ public class CoffeeDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        base.OnModelCreating(modelBuilder);
     }
 }

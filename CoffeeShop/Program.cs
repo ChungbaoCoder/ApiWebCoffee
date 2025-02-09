@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using CoffeeShop.Database;
 using CoffeeShop.Features.Basket;
@@ -26,13 +27,8 @@ builder.Services.AddDbContext<CoffeeDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
 });
 
-builder.Services.AddDbContext<AuthzDbContext>(o =>
-{
-    o.UseSqlServer(builder.Configuration.GetConnectionString("Identity"));
-});
-
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<AuthzDbContext>()
+    .AddEntityFrameworkStores<CoffeeDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication("JswToken")
@@ -52,14 +48,14 @@ builder.Services.AddAuthentication("JswToken")
 
 builder.Services.AddAuthorization(o =>
 {
-    o.AddPolicy("Admin", o =>
+    o.AddPolicy("Admin", p =>
     {
-
+        p.RequireClaim(ClaimTypes.Role, "Admin");
     });
 
-    o.AddPolicy("User", o =>
+    o.AddPolicy("User", p =>
     {
-
+        p.RequireClaim(ClaimTypes.Role, "User");
     });
 });
 
