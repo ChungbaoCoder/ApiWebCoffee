@@ -209,10 +209,6 @@ namespace CoffeeShop.Migrations
                     b.Property<int>("CoffeeItemId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Flavor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("MilkType")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
@@ -225,16 +221,18 @@ namespace CoffeeShop.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Topping")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("_flavor")
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("_topping")
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("CustomizationId");
 
                     b.HasIndex("CoffeeItemId")
                         .IsUnique();
 
-                    b.ToTable("Customization");
+                    b.ToTable("Customizations");
                 });
 
             modelBuilder.Entity("CoffeeShop.Entities.GroupOrder.BuyerOrder", b =>
@@ -250,6 +248,9 @@ namespace CoffeeShop.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18.2)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime");
@@ -348,6 +349,42 @@ namespace CoffeeShop.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("CoffeeShop.Infrastructure.Auth.RefreshToken", b =>
+                {
+                    b.Property<int>("RefreshTokenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RefreshTokenId"));
+
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateExpired")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JwtId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("RefreshTokenId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -643,6 +680,17 @@ namespace CoffeeShop.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("CoffeeShop.Infrastructure.Auth.RefreshToken", b =>
+                {
+                    b.HasOne("CoffeeShop.Infrastructure.Auth.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

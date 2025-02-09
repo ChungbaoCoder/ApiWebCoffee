@@ -27,18 +27,28 @@ builder.Services.AddDbContext<CoffeeDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
 });
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<CoffeeDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(o =>
+{
+    o.Password.RequiredLength = 4;
+})
+.AddEntityFrameworkStores<CoffeeDbContext>()
+.AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication("JswToken")
+builder.Services.AddAuthentication(o =>
+{
+    o.DefaultAuthenticateScheme = "JswToken";
+    o.DefaultChallengeScheme = "JswToken";
+    o.DefaultScheme = "JswToken";
+})
 .AddJwtBearer("JswToken", o =>
 {
+    o.SaveToken = true;
+    o.RequireHttpsMetadata = false;
+
     o.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
@@ -90,6 +100,6 @@ async Task SeedData(IServiceProvider serviceProvider)
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        await SeedAdmin.SeedAdminUser(serviceProvider, userManager, roleManager);
+        await SeedRole.SeedAdminUser(serviceProvider, userManager, roleManager);
     }
 }

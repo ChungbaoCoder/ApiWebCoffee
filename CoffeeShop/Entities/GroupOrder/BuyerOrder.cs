@@ -12,7 +12,7 @@ public class BuyerOrder
 
     private readonly List<OrderItem> _orderItems = new List<OrderItem>();
     public IReadOnlyCollection<OrderItem> OrderItems => _orderItems.AsReadOnly();
-    public decimal Total => _orderItems.Sum(oi => oi.Price * oi.Quantity);
+    public decimal Total {  get; private set; }
 
     public int BuyerId { get; private set; }
     public BuyerUser Buyer { get; private set; }
@@ -31,5 +31,10 @@ public class BuyerOrder
     {
         Status.SetStatus(status);
         UpdatedDate = DateTime.Now;
+    }
+
+    public void SetTotal()
+    {
+        Total = _orderItems.Sum(oi => oi.Price * oi.Quantity);
     }
 }

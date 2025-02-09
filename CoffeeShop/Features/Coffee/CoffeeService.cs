@@ -40,6 +40,11 @@ public class CoffeeService : ICoffeeItemService
         if (item == null)
             return null;
 
+        var availability = await _context.Availability.FirstOrDefaultAsync(a => a.CoffeeItemId == coffeeItemId);
+        var customization = await _context.Customizations.FirstOrDefaultAsync(c => c.CoffeeItemId == coffeeItemId);
+
+        item.Customization = customization;
+        item.Availability = availability;
         return item;
     }
 
@@ -80,13 +85,7 @@ public class CoffeeService : ICoffeeItemService
                 existItem.Customization.RemoveTopping(topping);
             }
 
-            foreach (var topping in item.Customization.Topping)
-            {
-                if (!existItem.Customization.Topping.Contains(topping))
-                {
-                    existItem.Customization.AddTopping(topping);
-                }
-            }
+            existItem.Customization.AddTopping(item.Customization.Topping);
         }
 
         if (item.Customization.Flavor != null)
@@ -97,13 +96,7 @@ public class CoffeeService : ICoffeeItemService
                 existItem.Customization.RemoveFlavor(flavor);
             }
 
-            foreach (var flavor in item.Customization.Flavor)
-            {
-                if (!existItem.Customization.Flavor.Contains(flavor))
-                {
-                    existItem.Customization.AddFlavor(flavor);
-                }
-            }
+            existItem.Customization.AddFlavor(item.Customization.Flavor);
         }
         await _context.SaveChangesAsync();
         return existItem;

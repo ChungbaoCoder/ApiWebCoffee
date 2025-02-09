@@ -22,6 +22,9 @@ public class BuyerOrderConfiguration : IEntityTypeConfiguration<BuyerOrder>
         builder.Property(o => o.UpdatedDate)
             .HasColumnType("datetime");
 
+        builder.Property(o => o.Total)
+            .HasColumnType("decimal(18.2)");
+
         builder.OwnsOne(o => o.ShipAddress, a =>
         {
             a.Property(sa => sa.Street)

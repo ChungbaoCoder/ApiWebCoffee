@@ -9,8 +9,8 @@ public class CoffeeItem
     public decimal Price { get; private set; }
     public string Size { get; private set; }
     public string PictureUri { get; private set; } = string.Empty;
-    public Customization Customization { get; private set; }
-    public Availability Availability { get; private set; }
+    public Customization Customization { get; set; }
+    public Availability Availability { get; set; }
 
     private CoffeeItem() { }
 

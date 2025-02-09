@@ -7,7 +7,6 @@ namespace CoffeeShop.Features.Coffee;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class CoffeeController : Controller
 {
     private readonly ICoffeeItemService _coffeeService;

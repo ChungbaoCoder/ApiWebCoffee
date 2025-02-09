@@ -28,7 +28,7 @@ public class OrderService : IOrderService
 
     public async Task<BuyerOrder> CreateOrder(int buyerId, int basketId, OrderAddress shipAddress, OrderStatus orderStatus)
     {
-        var basket = await _context.Baskets.FirstOrDefaultAsync(b => b.BuyerId == buyerId && b.BasketId == basketId);
+        var basket = await _context.Baskets.Include(b => b.Items).FirstOrDefaultAsync(b => b.BuyerId == buyerId && b.BasketId == basketId);
 
         if (basket == null)
             return null;
@@ -50,6 +50,7 @@ public class OrderService : IOrderService
         }
 
         var order = new BuyerOrder(buyerId, shipAddress, orderStatus, orderItems);
+        order.SetTotal();
         await _context.Orders.AddAsync(order);
         await _context.SaveChangesAsync();
         return order;
@@ -57,13 +58,13 @@ public class OrderService : IOrderService
 
     public async Task<List<BuyerOrder>> GetOrderByBuyerId(int buyerId)
     {
-        var orders = await _context.Orders.Where(o => o.BuyerId == buyerId).ToListAsync();
+        var orders = await _context.Orders.Include(o => o.OrderItems).Where(o => o.BuyerId == buyerId).ToListAsync();
         return orders;
     }
 
     public async Task<BuyerOrder> GetOrderById(int orderId)
     {
-        var order = await _context.Orders.FindAsync(orderId);
+        var order = await _context.Orders.Include(o => o.OrderItems).Where(o => o.OrderId == orderId).FirstOrDefaultAsync();
 
         if (order == null)
             return null;

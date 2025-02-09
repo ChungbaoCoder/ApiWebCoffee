@@ -34,10 +34,15 @@ public class BuyerBasket
         }
     }
 
-    public void RemoveItem(int basketItemId)
+    public bool RemoveItem(int coffeeItemId)
     {
-        var item = Items.First(i => i.BasketItemId == basketItemId);
+        var item = Items.FirstOrDefault(i => i.CoffeeItemId == coffeeItemId);
+
+        if (item == null)
+            return false;
+
         _items.Remove(item);
+        return true;
     }
 
     public void ClearBasket()

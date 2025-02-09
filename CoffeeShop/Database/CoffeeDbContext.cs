@@ -16,12 +16,15 @@ public class CoffeeDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<CoffeeItem> CoffeeItems { get; set; }
+    public DbSet<Customization> Customizations { get; set; }
+    public DbSet<Availability> Availability { get; set; }
     public DbSet<BuyerBasket> Baskets { get; set; }
     public DbSet<BasketItem> BasketItems { get; set; }
     public DbSet<BuyerOrder> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<BuyerUser> Buyer { get; set; }
     public DbSet<Address> Address { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

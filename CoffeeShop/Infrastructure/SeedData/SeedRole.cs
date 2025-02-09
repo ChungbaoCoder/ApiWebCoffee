@@ -3,15 +3,23 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CoffeeShop.Infrastructure.SeedData;
 
-public class SeedAdmin
+public class SeedRole
 {
     public static async Task SeedAdminUser(IServiceProvider serviceProvider, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
     {
-        var roleExist = await roleManager.RoleExistsAsync("Admin");
-        if (!roleExist)
+        string[] roleNames = { "User", "Admin", "Customer" };
+
+        foreach (var roleName in roleNames)
         {
-            var role = new IdentityRole("Admin");
-            await roleManager.CreateAsync(role);
+            var roleExist = await roleManager.RoleExistsAsync(roleName);
+            if (!roleExist)
+            {
+                var role = new IdentityRole(roleName)
+                {
+                    NormalizedName = roleName.ToUpper()
+                };
+                await roleManager.CreateAsync(role);
+            }
         }
 
         var adminUser = await userManager.FindByEmailAsync("admin@gmail.com");
@@ -20,7 +28,8 @@ public class SeedAdmin
             adminUser = new ApplicationUser
             {
                 UserName = "admintest",
-                Email = "admin@gmail.com"
+                Email = "admin@gmail.com",
+                SecurityStamp = Guid.NewGuid().ToString()
             };
             await userManager.CreateAsync(adminUser, "AdminPass@word123!");
             await userManager.AddToRoleAsync(adminUser, "Admin");

@@ -30,16 +30,10 @@ public class CustomizationConfiguration : IEntityTypeConfiguration<Customization
             .IsRequired()
             .HasColumnType("nvarchar(50)");
 
-        builder.Property(cu => cu.Topping)
-            .HasConversion(
-                cv => JsonConvert.SerializeObject(cv ?? new List<string> { "none" }),
-                cv => JsonConvert.DeserializeObject<List<string>> (cv) ?? new List<string> { "none" }
-            );
+        builder.Property(cu => cu._topping)
+            .HasColumnType("nvarchar(200)");
 
-        builder.Property(cu => cu.Flavor)
-            .HasConversion(
-                cv => JsonConvert.SerializeObject(cv ?? new List<string> { "none" }),
-                cv => JsonConvert.DeserializeObject<List<string>>(cv) ?? new List<string> { "none" }
-            );
+        builder.Property(cu => cu._flavor)
+            .HasColumnType("nvarchar(200)");
     }
 }
