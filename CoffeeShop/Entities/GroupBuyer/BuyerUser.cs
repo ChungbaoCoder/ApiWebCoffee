@@ -1,4 +1,5 @@
-﻿using CoffeeShop.Entities.GroupBasket;
+﻿using System.Text.Json.Serialization;
+using CoffeeShop.Entities.GroupBasket;
 using CoffeeShop.Entities.GroupOrder;
 
 namespace CoffeeShop.Entities.GroupBuyer;
@@ -11,11 +12,14 @@ public class BuyerUser
     public string Email { get; private set; }
     public DateTime DateCreated { get; private set; } = DateTime.Now;
     public DateTime DateUpdated { get; private set; } = DateTime.Now;
-    
+
+    [JsonIgnore]
     private List<Address> _address = new List<Address>();
     public IReadOnlyCollection<Address> Address => _address.AsReadOnly();
+    [JsonIgnore]
     private List<BuyerBasket> _basket = new List<BuyerBasket>();
     public IReadOnlyCollection<BuyerBasket> Baskets => _basket.AsReadOnly();
+    [JsonIgnore]
     private List<BuyerOrder> _order = new List<BuyerOrder>();
     public IReadOnlyCollection<BuyerOrder> Order => _order.AsReadOnly();
 

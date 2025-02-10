@@ -1,4 +1,6 @@
-﻿namespace CoffeeShop.Entities.GroupBuyer;
+﻿using System.Text.Json.Serialization;
+
+namespace CoffeeShop.Entities.GroupBuyer;
 
 public class Address
 {
@@ -9,7 +11,9 @@ public class Address
     public string Country { get; private set; }
     public bool IsDefault { get; private set; }
 
+    [JsonIgnore]
     public int BuyerId { get; private set; }
+    [JsonIgnore]
     public BuyerUser Buyer { get; private set; }
 
     private Address() { }

@@ -1,4 +1,6 @@
-﻿namespace CoffeeShop.Entities.GroupItem;
+﻿using System.Text.Json.Serialization;
+
+namespace CoffeeShop.Entities.GroupItem;
 
 public class Customization
 {
@@ -12,7 +14,9 @@ public class Customization
     public string? _flavor { get; private set; }
     public IReadOnlyCollection<string> Flavor => (_flavor?.Split(',').ToList()) ?? new List<string>();
 
+    [JsonIgnore]
     public int CoffeeItemId { get; private set; }
+    [JsonIgnore]
     public CoffeeItem CoffeeItem { get; private set; }
 
     private Customization() { }

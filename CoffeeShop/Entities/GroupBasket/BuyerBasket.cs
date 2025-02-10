@@ -1,4 +1,5 @@
-﻿using CoffeeShop.Entities.GroupBuyer;
+﻿using System.Text.Json.Serialization;
+using CoffeeShop.Entities.GroupBuyer;
 
 namespace CoffeeShop.Entities.GroupBasket;
 
@@ -9,7 +10,9 @@ public class BuyerBasket
     private readonly List<BasketItem> _items = new List<BasketItem>();
     public IReadOnlyCollection<BasketItem> Items => _items.AsReadOnly();
 
+    [JsonIgnore]
     public int BuyerId { get; private set; }
+    [JsonIgnore]
     public BuyerUser Buyer { get; private set; }
 
     private BuyerBasket() { }

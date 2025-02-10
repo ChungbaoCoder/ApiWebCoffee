@@ -1,4 +1,6 @@
-﻿namespace CoffeeShop.Entities.GroupBasket;
+﻿using System.Text.Json.Serialization;
+
+namespace CoffeeShop.Entities.GroupBasket;
 
 public class BasketItem
 {
@@ -7,7 +9,9 @@ public class BasketItem
     public decimal Price { get; private set; }
     public int Quantity { get; private set; }
 
+    [JsonIgnore]
     public int BasketId { get; private set; }
+    [JsonIgnore]
     public BuyerBasket Basket { get; private set; }
 
     private BasketItem() { }

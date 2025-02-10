@@ -1,4 +1,6 @@
-﻿namespace CoffeeShop.Entities.GroupItem;
+﻿using System.Text.Json.Serialization;
+
+namespace CoffeeShop.Entities.GroupItem;
 
 public class Availability
 {
@@ -7,7 +9,9 @@ public class Availability
     public bool AvailableStatus { get; private set; }
     public DateTime? RestockDate { get; private set; }
 
+    [JsonIgnore]
     public int CoffeeItemId { get; private set; }
+    [JsonIgnore]
     public CoffeeItem CoffeeItem { get; private set; }
 
     private Availability() { }

@@ -1,4 +1,5 @@
-﻿using CoffeeShop.Entities.GroupBuyer;
+﻿using System.Text.Json.Serialization;
+using CoffeeShop.Entities.GroupBuyer;
 
 namespace CoffeeShop.Entities.GroupOrder;
 
@@ -10,11 +11,14 @@ public class BuyerOrder
     public OrderAddress ShipAddress { get; private set; }
     public OrderStatus Status { get; private set; }
 
+    [JsonIgnore]
     private readonly List<OrderItem> _orderItems = new List<OrderItem>();
     public IReadOnlyCollection<OrderItem> OrderItems => _orderItems.AsReadOnly();
     public decimal Total {  get; private set; }
 
+    [JsonIgnore]
     public int BuyerId { get; private set; }
+    [JsonIgnore]
     public BuyerUser Buyer { get; private set; }
 
     private BuyerOrder() { }

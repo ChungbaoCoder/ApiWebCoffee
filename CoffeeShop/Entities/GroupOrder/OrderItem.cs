@@ -1,4 +1,6 @@
-﻿namespace CoffeeShop.Entities.GroupOrder;
+﻿using System.Text.Json.Serialization;
+
+namespace CoffeeShop.Entities.GroupOrder;
 
 public class OrderItem
 {
@@ -7,7 +9,9 @@ public class OrderItem
     public int Quantity { get; private set; }
     public ItemOrdered Item { get; private set; }
 
+    [JsonIgnore]
     public int OrderId { get; private set; }
+    [JsonIgnore]
     public BuyerOrder Order { get; private set; }
 
     private OrderItem() { }
