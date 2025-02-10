@@ -10,6 +10,6 @@ public class BasketItemRequest
     public int BasketId { get; set; }
     [Required(ErrorMessage = "Cần id của giỏ hàng")]
     public int CoffeeItemId { get; set; }
-    [Range(0, 99, ErrorMessage = "Số lượng phải là số dương.")]
+    [Range(1, 99, ErrorMessage = "Số lượng phải là số dương.")]
     public int Quantity { get; set; }
 }

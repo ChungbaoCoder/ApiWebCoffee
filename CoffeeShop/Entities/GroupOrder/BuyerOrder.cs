@@ -11,9 +11,7 @@ public class BuyerOrder
     public OrderAddress ShipAddress { get; private set; }
     public OrderStatus Status { get; private set; }
 
-    [JsonIgnore]
-    private readonly List<OrderItem> _orderItems = new List<OrderItem>();
-    public IReadOnlyCollection<OrderItem> OrderItems => _orderItems.AsReadOnly();
+    public List<OrderItem> OrderItems = new List<OrderItem>();
     public decimal Total {  get; private set; }
 
     [JsonIgnore]
@@ -28,7 +26,7 @@ public class BuyerOrder
         BuyerId = buyerId;
         ShipAddress = shipAddress;
         Status = status;
-        _orderItems = orderItems;
+        OrderItems = orderItems;
     }
 
     public void ConfigStatus(string status)
@@ -39,6 +37,6 @@ public class BuyerOrder
 
     public void SetTotal()
     {
-        Total = _orderItems.Sum(oi => oi.Price * oi.Quantity);
+        Total = OrderItems.Sum(oi => oi.Price * oi.Quantity);
     }
 }

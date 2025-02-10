@@ -38,7 +38,7 @@ public class BasketController : Controller
             if (basket == null)
                 return StatusCode(404, new Response<object>(RequestMessage.Text("Thêm sản phẩm vào giỏ hàng"), "Not Found", "Giỏ hàng hoặc sản phẩm không tìm thấy.", 404));
 
-            ClearBasket(request.BasketId);
+            await ClearBasket(request.BasketId);
             return Ok(new Response<BuyerBasket>(basket, RequestMessage.Text("Thêm sản phẩm vào giỏ hàng"), "No Content", "Sản phẩm thêm vào thành công." , 204));
         }
         catch (Exception ex)
@@ -69,7 +69,7 @@ public class BasketController : Controller
         return Ok(new Response<bool>(result, RequestMessage.Text("Xóa giỏ hàng bằng id"), "No Content", "Xóa giỏ hàng thành công.", 204));
     }
 
-    private async void ClearBasket(int id)
+    private async Task ClearBasket(int id)
     {
         await _basketService.ClearBasket(id);
     }

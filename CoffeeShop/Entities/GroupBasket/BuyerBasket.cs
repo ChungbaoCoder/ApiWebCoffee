@@ -7,8 +7,7 @@ public class BuyerBasket
 {
     public int BasketId { get; private set; }
 
-    private readonly List<BasketItem> _items = new List<BasketItem>();
-    public IReadOnlyCollection<BasketItem> Items => _items.AsReadOnly();
+    public List<BasketItem> Items = new List<BasketItem>();
 
     [JsonIgnore]
     public int BuyerId { get; private set; }
@@ -22,7 +21,7 @@ public class BuyerBasket
         BuyerId = buyerId;
     }
 
-    public int TotalItems => _items.Sum(i => i.Quantity);
+    public int TotalItems => Items.Sum(i => i.Quantity);
 
     public void AddItem(int coffeeItemId, decimal price, int quantity)
     {
@@ -33,24 +32,18 @@ public class BuyerBasket
         }
         else
         {
-            _items.Add(new BasketItem(BasketId, coffeeItemId, price, quantity));
+            Items.Add(new BasketItem(BasketId, coffeeItemId, price, quantity));
         }
     }
 
-    public bool RemoveItem(int coffeeItemId)
+    public void RemoveItem(int coffeeItemId)
     {
-        var item = Items.FirstOrDefault(i => i.CoffeeItemId == coffeeItemId);
-
-        if (item == null)
-            return false;
-
-        _items.Remove(item);
-        return true;
+        Items.RemoveAll(i => i.CoffeeItemId == coffeeItemId);
     }
 
     public void ClearBasket()
     {
-        _items.RemoveAll(i => i.Quantity == 0);
+        Items.RemoveAll(i => i.Quantity == 0);
     }
 
     public void SetNewBuyerId(int buyerId)

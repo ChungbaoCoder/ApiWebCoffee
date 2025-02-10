@@ -37,9 +37,7 @@ public class BasketService : IBasketService
         if (basket == null)
             return null;
 
-        if (basket.RemoveItem(coffeeItemId))
-            return null;
-
+        basket.RemoveItem(coffeeItemId);
         await _context.SaveChangesAsync();
         return basket;
     }
@@ -70,6 +68,11 @@ public class BasketService : IBasketService
 
     public async Task<BuyerBasket> ClearBasket(int basketId)
     {
+        var items = await _context.BasketItems.FirstOrDefaultAsync(bi => bi.BasketId == basketId);
+
+        if (items == null)
+            return null;
+
         var basket = await _context.Baskets.Include(b => b.Items).FirstOrDefaultAsync(b => b.BasketId == basketId);
 
         if (basket == null)

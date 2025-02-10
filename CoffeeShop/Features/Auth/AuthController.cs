@@ -57,20 +57,20 @@ public class AuthController : Controller
     }
 
     [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] AuthRequest request)
+    public async Task<IActionResult> Login(string email, string password)
     {
         if (!ModelState.IsValid)
             return BadRequest(new Response<object>(RequestMessage.Text("Đăng nhập vào tài khoản"), "Bad Request", "Dữ liệu không hợp lệ."));
 
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await _userManager.FindByEmailAsync(email);
 
         if (user == null)
-            return Unauthorized(new Response<AuthRequest>(request, RequestMessage.Text("Đăng nhập vào tài khoản"), "Unauthorized", $"Email {request.Email} của người dùng không có trong dữ liệu.", 401));
+            return Unauthorized(new Response<string>(email, RequestMessage.Text("Đăng nhập vào tài khoản"), "Unauthorized", $"Email {email} của người dùng không có trong dữ liệu.", 401));
 
-        var result = await _signInManager.PasswordSignInAsync(user, request.Password, false, false);
+        var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
 
         if (!result.Succeeded)
-            return Unauthorized(new Response<AuthRequest>(request, RequestMessage.Text("Đăng nhập vào tài khoản"), "Unauthorized", "Mật khẩu của người dùng không có trong dữ liệu.", 401));
+            return Unauthorized(new Response<object>(RequestMessage.Text("Đăng nhập vào tài khoản"), "Unauthorized", "Mật khẩu của người dùng không có trong dữ liệu.", 401));
 
         var token = await GenerateJwtToken(user);
         return Ok(new Response<TokenResponse>(token, RequestMessage.Text("Đăng nhập vào tài khoản và trả về token"), "Created", "Tạo token refresh cho người dùng", 201));

@@ -13,15 +13,9 @@ public class BuyerUser
     public DateTime DateCreated { get; private set; } = DateTime.Now;
     public DateTime DateUpdated { get; private set; } = DateTime.Now;
 
-    [JsonIgnore]
-    private List<Address> _address = new List<Address>();
-    public IReadOnlyCollection<Address> Address => _address.AsReadOnly();
-    [JsonIgnore]
-    private List<BuyerBasket> _basket = new List<BuyerBasket>();
-    public IReadOnlyCollection<BuyerBasket> Baskets => _basket.AsReadOnly();
-    [JsonIgnore]
-    private List<BuyerOrder> _order = new List<BuyerOrder>();
-    public IReadOnlyCollection<BuyerOrder> Order => _order.AsReadOnly();
+    public List<Address> Address = new List<Address>();
+    public List<BuyerBasket> Baskets = new List<BuyerBasket>();
+    public List<BuyerOrder> Orders = new List<BuyerOrder>();
 
     //Dành cho tương lai thêm chức năng thanh toán
     //private List<PaymentMethod> _paymentMethods = new List<PaymentMethod>();
@@ -46,7 +40,7 @@ public class BuyerUser
     {
         if (!Address.Any(a => a.AddressId == addressId))
         {
-            _address.Add(new Address(BuyerId, street, city, state, country));
+            Address.Add(new Address(BuyerId, street, city, state, country));
             return;
         }
         var existAddress = Address.First(a => a.AddressId == addressId);
@@ -56,7 +50,7 @@ public class BuyerUser
 
     public void SetDefaultAddress(int addressId)
     {
-        foreach(var address in _address)
+        foreach(var address in Address)
         {
             if (address.AddressId != addressId)
             {
@@ -72,10 +66,10 @@ public class BuyerUser
 
     public void RemoveAddress(int addressId)
     {
-        var existAddress = _address.FirstOrDefault(a => a.AddressId == addressId);
+        var existAddress = Address.FirstOrDefault(a => a.AddressId == addressId);
 
         if (existAddress != null)
-            _address.Remove(existAddress);
+            Address.Remove(existAddress);
     }
 
     //public void AddPaymentMethod(PaymentMethod paymentMethod)

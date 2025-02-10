@@ -51,7 +51,7 @@ public class BuyerService : IBuyerService
 
     public async Task<List<BuyerUser>> ListBuyer()
     {
-        var buyers = await _context.Buyer.ToListAsync();
+        var buyers = await _context.Buyer.Include(b => b.Address).Include(b => b.Baskets).Include(b => b.Orders).ToListAsync();
         return buyers;
     }
 

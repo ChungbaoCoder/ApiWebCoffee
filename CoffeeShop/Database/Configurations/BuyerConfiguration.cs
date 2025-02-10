@@ -8,17 +8,13 @@ public class BuyerConfiguration : IEntityTypeConfiguration<BuyerUser>
 {
     public void Configure(EntityTypeBuilder<BuyerUser> builder)
     {
-        builder.Ignore(b => b.Address);
-        builder.Ignore(b => b.Baskets);
-        builder.Ignore(b => b.Order);
-
         builder.HasKey(b => b.BuyerId);
 
         builder.HasMany(b => b.Address)
             .WithOne(a => a.Buyer)
             .HasForeignKey(a => a.BuyerId);
 
-        builder.HasMany(b => b.Order)
+        builder.HasMany(b => b.Orders)
             .WithOne(a => a.Buyer)
             .HasForeignKey(a => a.BuyerId);
 
