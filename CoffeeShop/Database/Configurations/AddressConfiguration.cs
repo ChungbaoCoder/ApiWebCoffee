@@ -10,6 +10,13 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
     {
         builder.HasKey(a => a.AddressId);
 
+        builder.Property(a => a.AddressId)
+            .ValueGeneratedOnAdd();
+
+        builder.HasOne(a => a.Buyer)
+            .WithMany(b => b.Address)
+            .HasForeignKey(a => a.BuyerId);
+
         builder.Property(a => a.Street)
             .IsRequired()
             .HasColumnType("nvarchar(200)");

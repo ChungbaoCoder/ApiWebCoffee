@@ -10,7 +10,14 @@ public class BasketItemConfiguration : IEntityTypeConfiguration<BasketItem>
     {
         builder.HasKey(bi => bi.BasketItemId);
 
-        builder.Property(bi => bi.CoffeeItemId)
+        builder.Property(bi => bi.BasketItemId)
+            .ValueGeneratedOnAdd();
+
+        builder.HasOne(bi => bi.Basket)
+            .WithMany(bb => bb.Items)
+            .HasForeignKey(bi => bi.BasketId);
+
+        builder.Property(bi => bi.ItemVariantId)
             .IsRequired()
             .HasColumnType("int");
 

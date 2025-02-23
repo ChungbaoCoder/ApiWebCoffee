@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-
-namespace CoffeeShop.Features;
+﻿namespace CoffeeShop.Features;
 
 public class RequestMessage
 {

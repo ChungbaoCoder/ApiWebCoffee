@@ -33,7 +33,7 @@ namespace CoffeeShop.Migrations
                     b.Property<int>("BasketId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CoffeeItemId")
+                    b.Property<int>("ItemVariantId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -57,12 +57,14 @@ namespace CoffeeShop.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasketId"));
 
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int");
+                    b.Property<int?>("BuyerId")
+                        .HasColumnType("integer");
 
                     b.HasKey("BasketId");
 
-                    b.HasIndex("BuyerId");
+                    b.HasIndex("BuyerId")
+                        .IsUnique()
+                        .HasFilter("[BuyerId] IS NOT NULL");
 
                     b.ToTable("Baskets");
                 });
@@ -112,127 +114,107 @@ namespace CoffeeShop.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BuyerId"));
 
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime");
+                    b.Property<DateTime>("DateJoined")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<DateTime>("DateUpdated")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(150)");
 
-                    b.Property<string>("UserGuid")
-                        .HasColumnType("varchar(40)");
+                    b.Property<string>("PhoneNum")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
 
                     b.HasKey("BuyerId");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Buyer");
                 });
 
-            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.Availability", b =>
+            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.ItemVariant", b =>
                 {
-                    b.Property<int>("AvailabilityId")
+                    b.Property<int>("ItemVariantId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AvailabilityId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemVariantId"));
 
-                    b.Property<bool>("AvailableStatus")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("CoffeeItemId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("RestockDate")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime");
-
-                    b.Property<int>("StockQuantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("AvailabilityId");
-
-                    b.HasIndex("CoffeeItemId")
-                        .IsUnique();
-
-                    b.ToTable("Availability");
-                });
-
-            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.CoffeeItem", b =>
-                {
-                    b.Property<int>("CoffeeItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CoffeeItemId"));
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PictureUri")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Size")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("CoffeeItemId");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
 
-                    b.ToTable("CoffeeItems");
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ItemVariantId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ItemVariants");
                 });
 
-            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.Customization", b =>
+            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.ProductItem", b =>
                 {
-                    b.Property<int>("CustomizationId")
+                    b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomizationId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
-                    b.Property<int>("CoffeeItemId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MilkType")
+                    b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("SugarLevel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<string>("Temperature")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime");
 
-                    b.Property<string>("_flavor")
+                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("_topping")
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<string>("ImageUri")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("CustomizationId");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
 
-                    b.HasIndex("CoffeeItemId")
-                        .IsUnique();
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime");
 
-                    b.ToTable("Customizations");
+                    b.HasKey("ProductId");
+
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("CoffeeShop.Entities.GroupOrder.BuyerOrder", b =>
@@ -244,10 +226,23 @@ namespace CoffeeShop.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<int>("BuyerId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<DateTime>("OrderedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
 
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(18.2)");
@@ -270,8 +265,15 @@ namespace CoffeeShop.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderItemId"));
 
+                    b.Property<int>("ItemVariantId")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
+
+                    b.Property<string>("OrderItemStatus")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -280,6 +282,8 @@ namespace CoffeeShop.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("OrderItemId");
+
+                    b.HasIndex("ItemVariantId");
 
                     b.HasIndex("OrderId");
 
@@ -534,10 +538,8 @@ namespace CoffeeShop.Migrations
             modelBuilder.Entity("CoffeeShop.Entities.GroupBasket.BuyerBasket", b =>
                 {
                     b.HasOne("CoffeeShop.Entities.GroupBuyer.BuyerUser", "Buyer")
-                        .WithMany("Baskets")
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithOne("Baskets")
+                        .HasForeignKey("CoffeeShop.Entities.GroupBasket.BuyerBasket", "BuyerId");
 
                     b.Navigation("Buyer");
                 });
@@ -553,26 +555,15 @@ namespace CoffeeShop.Migrations
                     b.Navigation("Buyer");
                 });
 
-            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.Availability", b =>
+            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.ItemVariant", b =>
                 {
-                    b.HasOne("CoffeeShop.Entities.GroupItem.CoffeeItem", "CoffeeItem")
-                        .WithOne("Availability")
-                        .HasForeignKey("CoffeeShop.Entities.GroupItem.Availability", "CoffeeItemId")
+                    b.HasOne("CoffeeShop.Entities.GroupItem.ProductItem", "ProductItem")
+                        .WithMany("ItemVariant")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CoffeeItem");
-                });
-
-            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.Customization", b =>
-                {
-                    b.HasOne("CoffeeShop.Entities.GroupItem.CoffeeItem", "CoffeeItem")
-                        .WithOne("Customization")
-                        .HasForeignKey("CoffeeShop.Entities.GroupItem.Customization", "CoffeeItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CoffeeItem");
+                    b.Navigation("ProductItem");
                 });
 
             modelBuilder.Entity("CoffeeShop.Entities.GroupOrder.BuyerOrder", b =>
@@ -583,7 +574,7 @@ namespace CoffeeShop.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("CoffeeShop.Entities.GroupOrder.OrderAddress", "ShipAddress", b1 =>
+                    b.OwnsOne("CoffeeShop.Entities.GroupOrder.OrderAddress", "Address", b1 =>
                         {
                             b1.Property<int>("BuyerOrderOrderId")
                                 .HasColumnType("int");
@@ -612,72 +603,27 @@ namespace CoffeeShop.Migrations
                                 .HasForeignKey("BuyerOrderOrderId");
                         });
 
-                    b.OwnsOne("CoffeeShop.Entities.GroupOrder.OrderStatus", "Status", b1 =>
-                        {
-                            b1.Property<int>("BuyerOrderOrderId")
-                                .HasColumnType("int");
-
-                            b1.Property<DateTime>("CompleteTime")
-                                .HasColumnType("datetime");
-
-                            b1.Property<DateTime>("LastUpdate")
-                                .HasColumnType("datetime");
-
-                            b1.Property<string>("Status")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(50)");
-
-                            b1.HasKey("BuyerOrderOrderId");
-
-                            b1.ToTable("Orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("BuyerOrderOrderId");
-                        });
+                    b.Navigation("Address")
+                        .IsRequired();
 
                     b.Navigation("Buyer");
-
-                    b.Navigation("ShipAddress")
-                        .IsRequired();
-
-                    b.Navigation("Status")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CoffeeShop.Entities.GroupOrder.OrderItem", b =>
                 {
+                    b.HasOne("CoffeeShop.Entities.GroupItem.ItemVariant", "ItemVariant")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ItemVariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CoffeeShop.Entities.GroupOrder.BuyerOrder", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("CoffeeShop.Entities.GroupOrder.ItemOrdered", "Item", b1 =>
-                        {
-                            b1.Property<int>("OrderItemId")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("CoffeeItemId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("ItemName")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(100)");
-
-                            b1.Property<string>("PictureUri")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(265)");
-
-                            b1.HasKey("OrderItemId");
-
-                            b1.ToTable("OrderItems");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderItemId");
-                        });
-
-                    b.Navigation("Item")
-                        .IsRequired();
+                    b.Navigation("ItemVariant");
 
                     b.Navigation("Order");
                 });
@@ -753,18 +699,20 @@ namespace CoffeeShop.Migrations
                 {
                     b.Navigation("Address");
 
-                    b.Navigation("Baskets");
+                    b.Navigation("Baskets")
+                        .IsRequired();
 
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.CoffeeItem", b =>
+            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.ItemVariant", b =>
                 {
-                    b.Navigation("Availability")
-                        .IsRequired();
+                    b.Navigation("OrderItems");
+                });
 
-                    b.Navigation("Customization")
-                        .IsRequired();
+            modelBuilder.Entity("CoffeeShop.Entities.GroupItem.ProductItem", b =>
+                {
+                    b.Navigation("ItemVariant");
                 });
 
             modelBuilder.Entity("CoffeeShop.Entities.GroupOrder.BuyerOrder", b =>

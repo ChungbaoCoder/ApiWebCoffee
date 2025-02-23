@@ -7,15 +7,18 @@ namespace CoffeeShop.Entities.GroupBuyer;
 public class BuyerUser
 {
     public int BuyerId { get; private set; }
-    public string? UserGuid { get; private set; }
-    public string Name { get; private set; }
-    public string Email { get; private set; }
-    public DateTime DateCreated { get; private set; } = DateTime.Now;
-    public DateTime DateUpdated { get; private set; } = DateTime.Now;
+    public string Name { get; private set; } = string.Empty;
+    public string Email { get; private set; } = string.Empty;
+    public string PhoneNum { get; private set; } = string.Empty;
+    public DateTime DateJoined { get; private set; } = DateTime.Now;
+    public List<Address> Address { get; private set; }
 
-    public List<Address> Address = new List<Address>();
-    public List<BuyerBasket> Baskets = new List<BuyerBasket>();
+    [JsonIgnore]
+    public BuyerBasket Baskets { get; private set; }
+    [JsonIgnore]
     public List<BuyerOrder> Orders = new List<BuyerOrder>();
+    [JsonIgnore]
+    public DateTime? DeletedAt { get; private set; }
 
     //Dành cho tương lai thêm chức năng thanh toán
     //private List<PaymentMethod> _paymentMethods = new List<PaymentMethod>();
@@ -23,53 +26,51 @@ public class BuyerUser
 
     private BuyerUser() { }
 
-    public BuyerUser(string name, string email)
+    public BuyerUser(string name, string email, string phoneNum)
+    {
+        UpdateInfo(name, email, phoneNum);
+        Address = new List<Address>();
+    }
+
+    public void UpdateInfo(string name, string email, string phoneNum)
     {
         Name = name;
         Email = email;
+        PhoneNum = phoneNum;
     }
 
-    public void UpdateInfo(string name, string email)
+    public void AddAddress(Address address)
     {
-        Name = name;
-        Email = email;
-        DateUpdated = DateTime.Now;
-    }
-
-    public void UpdateAddress(int addressId, string street, string city, string state, string country)
-    {
-        if (!Address.Any(a => a.AddressId == addressId))
-        {
-            Address.Add(new Address(BuyerId, street, city, state, country));
-            return;
-        }
-        var existAddress = Address.First(a => a.AddressId == addressId);
-        existAddress.UpdateAddress(street, city, state, country);
-        DateUpdated = DateTime.Now;
+        Address.Add(address);
     }
 
     public void SetDefaultAddress(int addressId)
     {
-        foreach(var address in Address)
+        if (Address.Count == 1)
         {
-            if (address.AddressId != addressId)
-            {
-                address.SetDefault(false);
-            }
-            else
-            {
+            foreach (var address in Address)
                 address.SetDefault(true);
+        }
+        else
+        {
+            foreach (var address in Address)
+            {
+                if (address.AddressId != addressId)
+                    address.SetDefault(false);
+                else
+                    address.SetDefault(true);
             }
         }
-        DateUpdated = DateTime.Now;
     }
 
-    public void RemoveAddress(int addressId)
+    public void MarkDeletion()
     {
-        var existAddress = Address.FirstOrDefault(a => a.AddressId == addressId);
+        DeletedAt = DateTime.Now;
+    }
 
-        if (existAddress != null)
-            Address.Remove(existAddress);
+    public void UnMarkDeletion()
+    {
+        DeletedAt = null;
     }
 
     //public void AddPaymentMethod(PaymentMethod paymentMethod)

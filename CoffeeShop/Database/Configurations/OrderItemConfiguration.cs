@@ -10,6 +10,18 @@ namespace CoffeeShop.Database.Configurations
         {
             builder.HasKey(oi => oi.OrderItemId);
 
+            builder.HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId);
+
+            builder.HasOne(oi => oi.ItemVariant)
+                .WithMany(iv => iv.OrderItems)
+                .HasForeignKey(oi => oi.ItemVariantId);
+
+            builder.Property(oi => oi.ItemVariantId)
+                .IsRequired()
+                .HasColumnType("int");
+
             builder.Property(oi => oi.Price)
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
@@ -18,20 +30,11 @@ namespace CoffeeShop.Database.Configurations
                 .IsRequired()
                 .HasColumnType("int");
 
-            builder.OwnsOne(oi => oi.Item, a =>
-            {
-                a.Property(io => io.CoffeeItemId)
-                    .IsRequired()
-                    .HasColumnType("int");
-
-                a.Property(io => io.ItemName)
-                    .IsRequired()
-                    .HasColumnType("nvarchar(100)");
-
-                a.Property(io => io.PictureUri)
-                    .IsRequired()
-                    .HasColumnType("nvarchar(265)");
-            });
+            builder.Property(oi => oi.OrderItemStatus)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (OrderItemStatus)Enum.Parse(typeof(OrderItemStatus), v))
+                .HasColumnType("varchar(20)");
         }
     }
 }

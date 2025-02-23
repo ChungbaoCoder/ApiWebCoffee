@@ -1,26 +1,28 @@
-﻿namespace CoffeeShop.Features;
+﻿using System.Net;
+
+namespace CoffeeShop.Features;
 
 public class Response<T>
 {
     public string Type { get; set; }
     public string Title { get; set; }
-    public int StatusCode { get; set; }
+    public HttpStatusCode StatusCode { get; set; }
     public string Detail { get; set; }
-    public T Data { get; set; }
+    public T? Data { get; set; }
 
-    public Response(T data, string type, string title, string message, int statusCode = 200)
+    public Response(string type, HttpStatusCode statusCode, string message, T data)
     {
         Type = type;
-        Title = title;
+        Title = statusCode.ToString();
         StatusCode = statusCode;
         Detail = message;
         Data = data;
     }
 
-    public Response(string type, string title, string message, int statusCode = 400)
+    public Response(string type, HttpStatusCode statusCode, string message)
     {
         Type = type;
-        Title = title;
+        Title = statusCode.ToString();
         StatusCode = statusCode;
         Detail = message;
     }

@@ -1,14 +1,17 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using CoffeeShop.Database;
 using CoffeeShop.Infrastructure.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CoffeeShop.Features.Auth;
 
+[AllowAnonymous]
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : Controller
@@ -25,17 +28,17 @@ public class AuthController : Controller
         _configuration = configuration;
     }
 
-    [HttpPost("Register")]
+    [HttpPost("users/register")]
     public async Task<IActionResult> Register([FromBody] AuthRequest request)
     {
         if (!ModelState.IsValid)
-            return BadRequest(new Response<object>(RequestMessage.Text("Đăng kí người dùng mới"), "Bad Request", "Dữ liệu không hợp lệ."));
+            return BadRequest(new Response<object>(RequestMessage.Text("Đăng kí người dùng mới"), HttpStatusCode.BadRequest, "Dữ liệu không hợp lệ."));
 
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
 
         if (existingUser != null)
         {
-            return BadRequest(new Response<AuthRequest>(request, RequestMessage.Text("Đăng kí người dùng mới"), "Bad Request", $"Email {request.Email} của người dùng này đã có."));
+            return BadRequest(new Response<AuthRequest>(RequestMessage.Text("Đăng kí người dùng mới"), HttpStatusCode.BadRequest, $"Email {request.Email} của người dùng này đã có.", request));
         }
 
         var user = new ApplicationUser
@@ -49,31 +52,31 @@ public class AuthController : Controller
 
         if (!result.Succeeded)
         {
-            return StatusCode(500, new Response<AuthRequest>(request, RequestMessage.Text("Đăng kí người dùng mới"), "Bad Request", "Người dùng không thể tạo được.", 500));
+            return StatusCode(500, new Response<AuthRequest>(RequestMessage.Text("Đăng kí người dùng mới"), HttpStatusCode.InternalServerError, "Người dùng không thể tạo được."));
         }
 
         await _userManager.AddToRoleAsync(user, "User");
-        return Ok(new Response<AuthRequest>(request, RequestMessage.Text("Đăng kí người dùng mới"), "Ok", "Người dùng đã được tạo.", 201));
+        return Ok(new Response<AuthRequest>(RequestMessage.Text("Đăng kí người dùng mới"), HttpStatusCode.OK, "Người dùng đã được tạo.", request));
     }
 
-    [HttpPost("Login")]
-    public async Task<IActionResult> Login(string email, string password)
+    [HttpPost("users/login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         if (!ModelState.IsValid)
-            return BadRequest(new Response<object>(RequestMessage.Text("Đăng nhập vào tài khoản"), "Bad Request", "Dữ liệu không hợp lệ."));
+            return BadRequest(new Response<object>(RequestMessage.Text("Đăng nhập vào tài khoản"), HttpStatusCode.BadRequest, "Dữ liệu không hợp lệ."));
 
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await _userManager.FindByEmailAsync(request.Email);
 
         if (user == null)
-            return Unauthorized(new Response<string>(email, RequestMessage.Text("Đăng nhập vào tài khoản"), "Unauthorized", $"Email {email} của người dùng không có trong dữ liệu.", 401));
+            return Unauthorized(new Response<string>(RequestMessage.Text("Đăng nhập vào tài khoản"), HttpStatusCode.Unauthorized, $"Email {request.Email} của người dùng không có trong dữ liệu.", request.Email));
 
-        var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+        var result = await _signInManager.PasswordSignInAsync(user, request.Password, false, false);
 
         if (!result.Succeeded)
-            return Unauthorized(new Response<object>(RequestMessage.Text("Đăng nhập vào tài khoản"), "Unauthorized", "Mật khẩu của người dùng không có trong dữ liệu.", 401));
+            return Unauthorized(new Response<object>(RequestMessage.Text("Đăng nhập vào tài khoản"), HttpStatusCode.Unauthorized, "Mật khẩu của người dùng không có trong dữ liệu."));
 
         var token = await GenerateJwtToken(user);
-        return Ok(new Response<TokenResponse>(token, RequestMessage.Text("Đăng nhập vào tài khoản và trả về token"), "Created", "Tạo token refresh cho người dùng", 201));
+        return Created(Request.Path, new Response<TokenResponse>( RequestMessage.Text("Đăng nhập vào tài khoản và trả về token"), HttpStatusCode.Created, "Tạo token refresh cho người dùng", token));
     }
 
     private async Task<TokenResponse> GenerateJwtToken(ApplicationUser user)

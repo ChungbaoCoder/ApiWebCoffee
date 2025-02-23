@@ -6,39 +6,32 @@ namespace CoffeeShop.Entities.GroupBasket;
 public class BuyerBasket
 {
     public int BasketId { get; private set; }
+    public int? BuyerId { get; private set; }
 
-    public List<BasketItem> Items = new List<BasketItem>();
-
-    [JsonIgnore]
-    public int BuyerId { get; private set; }
     [JsonIgnore]
     public BuyerUser Buyer { get; private set; }
+
+    public List<BasketItem> Items { get; private set; }
 
     private BuyerBasket() { }
 
     public BuyerBasket(int buyerId)
     {
         BuyerId = buyerId;
+        Items = new List<BasketItem>();
     }
 
     public int TotalItems => Items.Sum(i => i.Quantity);
+    public decimal TotalPrice => Items.Sum(i => i.Price);
 
-    public void AddItem(int coffeeItemId, decimal price, int quantity)
+    public void AddItem(int itemVariantId, decimal price, int quantity)
     {
-        if (Items.Any(i => i.BasketItemId == coffeeItemId))
+        if (!Items.Any(i => i.BasketItemId == itemVariantId))
         {
-            var existItem = Items.First(i => i.CoffeeItemId == coffeeItemId);
-            existItem.AddQuantity(quantity);
+            Items.Add(new BasketItem(BasketId, itemVariantId, price, quantity));
         }
-        else
-        {
-            Items.Add(new BasketItem(BasketId, coffeeItemId, price, quantity));
-        }
-    }
-
-    public void RemoveItem(int coffeeItemId)
-    {
-        Items.RemoveAll(i => i.CoffeeItemId == coffeeItemId);
+        var existItem = Items.First(i => i.ItemVariantId == itemVariantId);
+        existItem.AddQuantity(quantity);
     }
 
     public void ClearBasket()
@@ -46,7 +39,17 @@ public class BuyerBasket
         Items.RemoveAll(i => i.Quantity == 0);
     }
 
-    public void SetNewBuyerId(int buyerId)
+    public void RemoveItem(int itemVariantId)
+    {
+        Items.RemoveAll(i => i.ItemVariantId == itemVariantId);
+    }
+
+    public void RemoveAllItems()
+    {
+        Items.Clear();
+    }
+
+    public void TransferBuyer(int buyerId)
     {
         BuyerId = buyerId;
     }

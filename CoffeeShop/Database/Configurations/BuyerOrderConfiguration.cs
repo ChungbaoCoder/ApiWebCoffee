@@ -8,54 +8,57 @@ public class BuyerOrderConfiguration : IEntityTypeConfiguration<BuyerOrder>
 {
     public void Configure(EntityTypeBuilder<BuyerOrder> builder)
     {
-        builder.Ignore(o => o.OrderItems);
-
         builder.HasKey(o => o.OrderId);
 
-        builder.HasMany(o => o.OrderItems)
-            .WithOne(oi => oi.Order)
-            .HasForeignKey(oi => oi.OrderId);
+        builder.HasOne(o => o.Buyer)
+            .WithMany(b => b.Orders)
+            .HasForeignKey(o => o.BuyerId);
 
-        builder.Property(o => o.CreatedDate)
-            .HasColumnType("datetime");
+        builder.Property(o => o.BuyerId)
+            .IsRequired()
+            .HasColumnType("integer");
+
+        builder.Property(o => o.OrderedDate)
+            .HasColumnType("datetime")
+            .HasDefaultValueSql("GETDATE()");
+
+        builder.Property(o => o.Total)
+            .IsRequired()
+            .HasColumnType("decimal(18.2)");
+
+        builder.Property(o => o.OrderStatus)
+            .HasConversion(
+                v => v.ToString(),
+                v => (OrderStatus)Enum.Parse(typeof(OrderStatus), v))
+            .HasColumnType("varchar(20)");
+
+        builder.Property(o => o.PaymentStatus)
+            .HasConversion(
+                v => v.ToString(),
+                v => (PaymentStatus)Enum.Parse(typeof(PaymentStatus), v))
+            .HasColumnType("varchar(20)");
+
+        builder.OwnsOne(o => o.Address, a =>
+        {
+            a.Property(o => o.Street)
+                .IsRequired()
+                .HasColumnType("nvarchar(200)");
+            a.Property(o => o.City)
+                .IsRequired()
+                .HasColumnType("nvarchar(200)");
+            a.Property(o => o.State)
+                .IsRequired()
+                .HasColumnType("nvarchar(200)");
+            a.Property(o => o.Country)
+                .IsRequired()
+                .HasColumnType("nvarchar(200)");
+        });
 
         builder.Property(o => o.UpdatedDate)
             .HasColumnType("datetime");
 
-        builder.Property(o => o.Total)
-            .HasColumnType("decimal(18.2)");
-
-        builder.OwnsOne(o => o.ShipAddress, a =>
-        {
-            a.Property(sa => sa.Street)
-                .IsRequired()
-                .HasColumnType("nvarchar(200)");
-
-            a.Property(sa => sa.City)
-                .IsRequired()
-                .HasColumnType("nvarchar(200)");
-
-            a.Property(sa => sa.State)
-                .IsRequired()
-                .HasColumnType("nvarchar(200)");
-
-            a.Property(sa => sa.Country)
-                .IsRequired()
-                .HasColumnType("nvarchar(200)");
-        });
-
-        builder.OwnsOne(o => o.Status, a =>
-        {
-            a.Property(s => s.Status)
-                .IsRequired()
-                .HasColumnType("nvarchar(50)");
-
-            a.Property(s => s.CompleteTime)
-                .IsRequired()
-                .HasColumnType("datetime");
-
-            a.Property(s => s.LastUpdate)
-                .HasColumnType("datetime");
-        });
+        builder.Property(o => o.DeletedAt)
+            .IsRequired(false)
+            .HasColumnType("datetime");
     }
 }

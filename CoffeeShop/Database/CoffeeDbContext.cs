@@ -15,9 +15,9 @@ public class CoffeeDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
-    public DbSet<CoffeeItem> CoffeeItems { get; set; }
-    public DbSet<Customization> Customizations { get; set; }
-    public DbSet<Availability> Availability { get; set; }
+    public DbSet<ProductItem> Products { get; set; }
+    //public DbSet<Topping> Toppings { get; set; }
+    public DbSet<ItemVariant> ItemVariants { get; set; }
     public DbSet<BuyerBasket> Baskets { get; set; }
     public DbSet<BasketItem> BasketItems { get; set; }
     public DbSet<BuyerOrder> Orders { get; set; }

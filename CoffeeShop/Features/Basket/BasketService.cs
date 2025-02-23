@@ -13,33 +13,33 @@ public class BasketService : IBasketService
         _context = context;
     }
 
-    public async Task<BuyerBasket> AddItemToBasket(int buyerId, int basketId, int coffeeItemId, int quantity = 1)
+    public async Task<BuyerBasket> AddItemToBasket(int basketId, int itemVariantId, int quantity = 1)
     {
-        var basket = await _context.Baskets.Where(b => b.BuyerId == buyerId && b.BasketId == basketId).FirstOrDefaultAsync();
+        var basket = await _context.Baskets.FindAsync(basketId);
 
         if (basket == null)
             return null;
 
-        var item = await _context.CoffeeItems.FindAsync(coffeeItemId);
+        var item = await _context.ItemVariants.FindAsync(itemVariantId);
 
         if (item == null)
             return null;
 
-        basket.AddItem(coffeeItemId, item.Price, quantity);
+        basket.AddItem(itemVariantId, item.Price, quantity);
         await _context.SaveChangesAsync();
         return basket;
     }
 
-    public async Task<BuyerBasket> RemoveItemFromBasket(int basketId, int coffeeItemId)
+    public async Task<bool> RemoveItemFromBasket(int basketId, int itemVariantId)
     {
         var basket = await _context.Baskets.Include(b => b.Items).FirstOrDefaultAsync(b => b.BasketId == basketId);
 
         if (basket == null)
-            return null;
+            return false;
 
-        basket.RemoveItem(coffeeItemId);
+        basket.RemoveItem(itemVariantId);
         await _context.SaveChangesAsync();
-        return basket;
+        return true;
     }
 
     public async Task<BuyerBasket> CreateBasketForUser(int buyerId)
@@ -55,31 +55,40 @@ public class BasketService : IBasketService
         return newbasket;
     }
 
-    public async Task<bool> DeleteBasket(int basketId)
+    public async Task<bool> DeleteAllItems(int basketId)
     {
         var basket = await _context.Baskets.FindAsync(basketId);
         if (basket == null)
             return false;
 
-        _context.Baskets.Remove(basket);
+        basket.RemoveAllItems();
         await _context.SaveChangesAsync();
         return true;
     }
 
-    public async Task<BuyerBasket> ClearBasket(int basketId)
+    public async Task<bool> ClearBasket(int basketId)
     {
-        var items = await _context.BasketItems.FirstOrDefaultAsync(bi => bi.BasketId == basketId);
+        var items = await _context.BasketItems.FindAsync(basketId);
 
         if (items == null)
-            return null;
+            return false;
 
         var basket = await _context.Baskets.Include(b => b.Items).FirstOrDefaultAsync(b => b.BasketId == basketId);
 
         if (basket == null)
-            return null;
+            return false;
 
         basket.ClearBasket();
         await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<BuyerBasket> ViewBasket(int basketId)
+    {
+        var basket = await _context.Baskets.Include(b => b.Items).AsNoTracking().FirstOrDefaultAsync(b => b.BasketId == basketId);
+        if (basket == null)
+            return null;
+
         return basket;
     }
 }

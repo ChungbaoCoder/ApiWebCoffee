@@ -1,7 +1,6 @@
 ﻿using CoffeeShop.Database;
 using CoffeeShop.Entities.GroupOrder;
 using CoffeeShop.Interface;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShop.Features.Order;
@@ -16,40 +15,43 @@ public class OrderService : IOrderService
 
     public async Task<bool> DeleteOrder(int orderId)
     {
-        var order = await _context.Orders.FindAsync(orderId);
+        var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId && o.DeletedAt == null);
 
         if (order == null)
             return false;
 
-        _context.Orders.Remove(order);
+        order.MarkDeletion();
         await _context.SaveChangesAsync();
         return true;
     }
 
-    public async Task<BuyerOrder> CreateOrder(int buyerId, int basketId, OrderAddress shipAddress, OrderStatus orderStatus)
+    public async Task<bool> DeleteManyOrders(List<int> orderId)
     {
-        var basket = await _context.Baskets.Include(b => b.Items).FirstOrDefaultAsync(b => b.BuyerId == buyerId && b.BasketId == basketId);
+        var orders = await _context.Orders.Where(o => orderId.Contains(o.OrderId) && o.DeletedAt == null).ToListAsync();
 
-        if (basket == null)
+        if (orders == null || orders.Count == 0)
+            return false;
+
+        foreach (var order in orders)
+        {
+            order.MarkDeletion();
+        }
+        
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<BuyerOrder> CreateOrder(int buyerId, List<OrderItem> orderItems)
+    {
+        var buyer = await _context.Buyer.FirstOrDefaultAsync(b => b.BuyerId == buyerId && b.DeletedAt == null);
+
+        if (buyer == null)
             return null;
 
-        List<OrderItem> orderItems = new List<OrderItem>();
+        var address = await _context.Address.FirstOrDefaultAsync(a => a.BuyerId == buyerId);
 
-        foreach (var item in basket.Items)
-        {
-            var itemOrdered = await _context.CoffeeItems.Where(ci => ci.CoffeeItemId == item.CoffeeItemId)
-                .Select(c => new
-                {
-                    c.CoffeeItemId,
-                    c.Name,
-                    c.PictureUri
-                }).FirstAsync();
-
-            OrderItem orderItem = new OrderItem(item.Price, item.Quantity, new ItemOrdered(itemOrdered.CoffeeItemId, itemOrdered.Name, itemOrdered.PictureUri));
-            orderItems.Add(orderItem);
-        }
-
-        var order = new BuyerOrder(buyerId, shipAddress, orderStatus, orderItems);
+        var order = new BuyerOrder(buyerId, orderItems);
+        order.Address.UpdateShippingAddress(address.Street, address.City, address.State, address.Country);
         order.SetTotal();
         await _context.Orders.AddAsync(order);
         await _context.SaveChangesAsync();
@@ -58,13 +60,13 @@ public class OrderService : IOrderService
 
     public async Task<List<BuyerOrder>> GetOrderByBuyerId(int buyerId)
     {
-        var orders = await _context.Orders.Include(o => o.OrderItems).Where(o => o.BuyerId == buyerId).ToListAsync();
+        var orders = await _context.Orders.Include(o => o.OrderItems).Where(o => o.BuyerId == buyerId && o.DeletedAt == null).AsNoTracking().ToListAsync();
         return orders;
     }
 
     public async Task<BuyerOrder> GetOrderById(int orderId)
     {
-        var order = await _context.Orders.Include(o => o.OrderItems).Where(o => o.OrderId == orderId).FirstOrDefaultAsync();
+        var order = await _context.Orders.Include(o => o.OrderItems).Where(o => o.OrderId == orderId && o.DeletedAt == null).AsNoTracking().FirstOrDefaultAsync();
 
         if (order == null)
             return null;
@@ -72,14 +74,15 @@ public class OrderService : IOrderService
         return order;
     }
 
-    public async Task<BuyerOrder> UpdateOrderStatus(int orderId, string orderStatus)
+    public async Task<BuyerOrder> UpdateOrderStatus(int orderId, OrderStatus orderStatus, PaymentStatus paymentStatus)
     {
-        var order = await _context.Orders.FindAsync(orderId);
+        var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId && o.DeletedAt == null);
 
         if (order == null)
             return null;
 
-        order.ConfigStatus(orderStatus);
+        order.SetStatus(orderStatus);
+        order.SetPaymentStatus(paymentStatus);
         await _context.SaveChangesAsync();
         return order;
     }

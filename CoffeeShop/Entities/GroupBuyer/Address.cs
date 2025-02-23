@@ -4,17 +4,18 @@ namespace CoffeeShop.Entities.GroupBuyer;
 
 public class Address
 {
+    [JsonIgnore]
     public int AddressId { get; private set; }
-    public string Street { get; private set; }
-    public string City { get; private set; }
-    public string State { get; private set; }
-    public string Country { get; private set; }
-    public bool IsDefault { get; private set; }
-
     [JsonIgnore]
     public int BuyerId { get; private set; }
     [JsonIgnore]
     public BuyerUser Buyer { get; private set; }
+
+    public string Street { get; private set; } = string.Empty;
+    public string City { get; private set; } = string.Empty;
+    public string State { get; private set; } = string.Empty;
+    public string Country { get; private set; } = string.Empty;
+    public bool IsDefault { get; private set; }
 
     private Address() { }
 

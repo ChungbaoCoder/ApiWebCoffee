@@ -1,4 +1,5 @@
-﻿using CoffeeShop.Entities.GroupBuyer;
+﻿using CoffeeShop.Entities.GroupBasket;
+using CoffeeShop.Entities.GroupBuyer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,33 +11,30 @@ public class BuyerConfiguration : IEntityTypeConfiguration<BuyerUser>
     {
         builder.HasKey(b => b.BuyerId);
 
-        builder.HasMany(b => b.Address)
-            .WithOne(a => a.Buyer)
-            .HasForeignKey(a => a.BuyerId);
+        builder.Property(bi => bi.BuyerId)
+            .ValueGeneratedOnAdd();
 
-        builder.HasMany(b => b.Orders)
-            .WithOne(a => a.Buyer)
-            .HasForeignKey(a => a.BuyerId);
-
-        builder.HasMany(b => b.Baskets)
-            .WithOne(b => b.Buyer)
-            .HasForeignKey(b => b.BuyerId);
-
-        builder.Property(b => b.UserGuid)
-            .HasColumnType("varchar(40)");
+        builder.HasIndex(b => b.Email)
+            .IsUnique();
 
         builder.Property(b => b.Name)
             .IsRequired()
-            .HasColumnType("nvarchar(100)");
+            .HasColumnType("nvarchar(150)");
 
         builder.Property(b => b.Email)
             .IsRequired()
-            .HasColumnType("varchar(100)");
+            .HasColumnType("nvarchar(150)");
 
-        builder.Property(b => b.DateCreated)
-            .HasColumnType("datetime");
+        builder.Property(b => b.PhoneNum)
+            .IsRequired()
+            .HasColumnType("varchar(20)");
 
-        builder.Property(b => b.DateUpdated)
+        builder.Property(b => b.DateJoined)
+            .HasColumnType("datetime")
+            .HasDefaultValueSql("GETDATE()");
+
+        builder.Property(b => b.DeletedAt)
+            .IsRequired(false)
             .HasColumnType("datetime");
     }
 }

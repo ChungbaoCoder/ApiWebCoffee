@@ -2,10 +2,8 @@
 
 namespace CoffeeShop.Features.Auth;
 
-public class AuthRequest
+public class LoginRequest
 {
-    [Required(ErrorMessage = "Tên cần phải có")]
-    public string Name { get; set; } = string.Empty;
     [Required(ErrorMessage = "Email cần phải có")]
     [EmailAddress(ErrorMessage = "Không đúng định dạng email")]
     public string Email { get; set; } = string.Empty;
