@@ -18,6 +18,7 @@ public class BuyerBasket
     public BuyerBasket(int buyerId)
     {
         BuyerId = buyerId;
+        Items = new List<BasketItem>();
     }
 
     public int TotalItems => Items.Sum(i => i.Quantity);

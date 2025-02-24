@@ -16,7 +16,7 @@ public class ProductItem
     [JsonIgnore]
     public DateTime? DeletedAt { get; private set; }
 
-    private ProductItem() { }
+    private ProductItem() { ItemVariant = new List<ItemVariant>(); }
 
     public ProductItem(string name, string description, string category, string imageUri)
     {

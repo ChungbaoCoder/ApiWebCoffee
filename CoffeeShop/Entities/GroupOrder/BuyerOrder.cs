@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Metrics;
-using System.IO;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using CoffeeShop.Entities.GroupBuyer;
 
 namespace CoffeeShop.Entities.GroupOrder;
@@ -24,7 +22,7 @@ public class BuyerOrder
     [JsonIgnore]
     public DateTime? DeletedAt { get; private set; }
 
-    private BuyerOrder() { }
+    private BuyerOrder() { OrderItems = new List<OrderItem>(); }
 
     public BuyerOrder(int buyerId, List<OrderItem> orderItems)
     {

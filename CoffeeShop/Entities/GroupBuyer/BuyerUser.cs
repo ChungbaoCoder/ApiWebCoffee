@@ -24,7 +24,7 @@ public class BuyerUser
     //private List<PaymentMethod> _paymentMethods = new List<PaymentMethod>();
     //public IReadOnlyCollection<PaymentMethod> PaymentMethods => _paymentMethods.AsReadOnly();
 
-    private BuyerUser() { }
+    private BuyerUser() { Address = new List<Address>(); }
 
     public BuyerUser(string name, string email, string phoneNum)
     {
