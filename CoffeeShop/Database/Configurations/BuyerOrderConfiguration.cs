@@ -24,7 +24,7 @@ public class BuyerOrderConfiguration : IEntityTypeConfiguration<BuyerOrder>
 
         builder.Property(o => o.Total)
             .IsRequired()
-            .HasColumnType("decimal(18.2)");
+            .HasColumnType("decimal(18,2)");
 
         builder.Property(o => o.OrderStatus)
             .HasConversion(

@@ -21,10 +21,10 @@ public class OrderController : Controller
     {
         var orders = await _orderService.GetOrderByBuyerId(id);
 
-        if (orders == null || orders.Count == 0)
+        if (!orders.Any())
             return NotFound(new Response<object>(RequestMessage.Text("Lấy danh sách hóa đơn của người dùng bằng id"), HttpStatusCode.NotFound, "Danh sách hóa đơn của người dùng không tìm thấy."));
 
-        return Ok(new Response<List<BuyerOrder>>(RequestMessage.Text("Lấy danh sách hóa đơn của người dùng bằng id"), HttpStatusCode.OK, $"Trả về danh sách hóa đơn của khách với mã {id} thành công.", orders));
+        return Ok(new Response<IEnumerable<BuyerOrder>>(RequestMessage.Text("Lấy danh sách hóa đơn của người dùng bằng id"), HttpStatusCode.OK, $"Trả về danh sách hóa đơn của khách với mã {id} thành công.", orders));
     }
 
     [HttpGet("{id}")]
@@ -53,7 +53,7 @@ public class OrderController : Controller
             if (result == null)
                 return NotFound(new Response<object>(RequestMessage.Text("Tạo hóa đơn mới cho người mua"), HttpStatusCode.NotFound, "Khách hàng không tìm thấy."));
 
-            return Created(Request.Path, new Response<BuyerOrder>(RequestMessage.Text("Tạo hóa đơn mới cho người mua"), HttpStatusCode.Created, "Hóa đơn tạo ra thành công."));
+            return Created(Request.Path, new Response<BuyerOrder>(RequestMessage.Text("Tạo hóa đơn mới cho người mua"), HttpStatusCode.Created, "Hóa đơn tạo ra thành công.", result));
         }
         catch (Exception ex)
         {
@@ -62,9 +62,9 @@ public class OrderController : Controller
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] OrderStatus orderStatus, [FromBody] PaymentStatus paymentStatus)
+    public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] OrderStatusRequest request)
     {
-        var result = await _orderService.UpdateOrderStatus(id, orderStatus, paymentStatus);
+        var result = await _orderService.UpdateOrderStatus(id, request.OrderStatus, request.PaymentStatus);
 
         if (result == null)
             return NotFound(new Response<object>(RequestMessage.Text("Cập nhật hóa đơn"), HttpStatusCode.NotFound, "Hóa đơn của khách không tìm thấy."));

@@ -19,7 +19,7 @@ public class Address
 
     private Address() { }
 
-    public Address(int buyerId, string street, string city, string state, string country)
+    public Address(string street, string city, string state, string country)
     {
         UpdateAddress(street, city, state, country);
     }

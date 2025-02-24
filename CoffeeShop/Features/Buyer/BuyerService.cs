@@ -8,7 +8,6 @@ namespace CoffeeShop.Features.Buyer;
 public class BuyerService : IBuyerService
 {
     private readonly CoffeeDbContext _context;
-
     public BuyerService(CoffeeDbContext context)
     {
         _context = context;
@@ -16,7 +15,7 @@ public class BuyerService : IBuyerService
 
     public async Task<BuyerUser> AddAddress(int buyerId, Address address)
     {
-        var buyer = await _context.Buyer.Include(b => b.Address).FirstOrDefaultAsync(b => b.BuyerId == buyerId);
+        var buyer = await _context.Buyer.Include(b => b.Address).FirstOrDefaultAsync(b => b.BuyerId == buyerId && b.DeletedAt == null);
 
         if (buyer == null)
             return null;
@@ -28,7 +27,7 @@ public class BuyerService : IBuyerService
 
     public async Task<BuyerUser> CreateBuyer(string name, string email, string phoneNum)
     {
-        var buyer = await _context.Buyer.FirstOrDefaultAsync(b => b.Name == name && b.Email == email);
+        var buyer = await _context.Buyer.FirstOrDefaultAsync(b => b.Email == email && b.PhoneNum == phoneNum);
 
         if (buyer != null)
             throw new InvalidOperationException("Người dùng với email này đã có rồi.");
@@ -77,9 +76,13 @@ public class BuyerService : IBuyerService
         return buyer;
     }
 
-    public async Task<List<BuyerUser>> ListBuyer()
+    public async Task<IEnumerable<BuyerUser>> ListBuyer()
     {
         var buyers = await _context.Buyer.Include(b => b.Address).AsNoTracking().ToListAsync();
+
+        if (buyers == null)
+            return [];
+
         return buyers;
     }
 
@@ -92,6 +95,18 @@ public class BuyerService : IBuyerService
 
         _context.Remove(address);
         return true;
+    }
+
+    public async Task<BuyerUser> SetDefaultAddress(int buyerId, int addressId)
+    {
+        var buyer = await _context.Buyer.Include(b => b.Address).FirstOrDefaultAsync(b => b.BuyerId == buyerId && b.DeletedAt == null);
+
+        if (buyer == null)
+            return null;
+
+        buyer.SetDefaultAddress(addressId);
+        await _context.SaveChangesAsync();
+        return buyer;
     }
 
     public async Task<Address> UpdateAddress(int buyerId, Address address)

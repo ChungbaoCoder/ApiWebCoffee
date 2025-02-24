@@ -18,21 +18,12 @@ public class BasketItem
 
     private BasketItem() { }
 
-    public BasketItem(int basketId, int itemVariantId, decimal price, int quantity)
+    public BasketItem(int itemVariantId, decimal price, int quantity)
     {
-        BasketId = basketId;
         ItemVariantId = itemVariantId;
         Price = price;
         SetQuantity(quantity);
     }
-
-    //public void SetCustom(Temperature temperature = Temperature.NotSet, Iced iced = Iced.NotSet, Milk milk = Milk.NotSet, Sweetness sweetness = Sweetness.NotSet)
-    //{
-    //    Temperature = temperature;
-    //    Iced = iced;
-    //    Milk = milk;
-    //    Sweetness = sweetness;
-    //}
 
     public void AddQuantity(int quantity)
     {

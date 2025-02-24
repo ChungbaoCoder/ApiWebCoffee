@@ -1,5 +1,4 @@
-﻿using CoffeeShop.Entities.GroupBasket;
-using CoffeeShop.Entities.GroupBuyer;
+﻿using CoffeeShop.Entities.GroupBuyer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

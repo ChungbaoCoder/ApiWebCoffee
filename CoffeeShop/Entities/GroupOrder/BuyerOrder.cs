@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.Metrics;
+using System.IO;
+using System.Text.Json.Serialization;
 using CoffeeShop.Entities.GroupBuyer;
 
 namespace CoffeeShop.Entities.GroupOrder;
@@ -31,6 +33,14 @@ public class BuyerOrder
         OrderStatus = OrderStatus.PendingPayment;
         PaymentStatus = PaymentStatus.Pending;
         UpdatedDate = DateTime.Now;
+    }
+
+    public void UpdateShippingAddress(Address address)
+    {
+        if (Address == null)
+            Address = new OrderAddress(address.Street, address.City, address.State, address.Country);
+        else
+            Address.UpdateShippingAddress(address.Street, address.City, address.State, address.Country);
     }
 
     public void SetStatus(OrderStatus newOrderStatus)

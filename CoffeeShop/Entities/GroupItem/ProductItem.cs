@@ -33,9 +33,34 @@ public class ProductItem
         UpdatedDate = DateTime.Now;
     }
 
+    public void AddVariant(List<ItemVariant> itemVariants)
+    {
+        ItemVariant.AddRange(itemVariants);
+    }
+
+    public void UpdateVariant(int itemVariantId, ItemVariant itemVariant)
+    {
+        if (ItemVariant.Any())
+        {
+            var variant = ItemVariant.First(iv => iv.ItemVariantId == itemVariantId);
+
+            variant.UpdateVariant(itemVariant.Size, itemVariant.Price);
+            variant.SetQuantity(itemVariant.StockQuantity);
+            variant.SetStatus(itemVariant.Status);
+        }
+    }
+
     public void MarkDeletion()
     {
         DeletedAt = DateTime.Now;
+
+        if (DeletedAt != null)
+        {
+            foreach (var item in ItemVariant)
+            {
+                item.MarkDeletion();
+            }
+        }
     }
 
     public void UnMarkDeletion()

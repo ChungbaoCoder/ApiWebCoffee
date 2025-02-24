@@ -2,7 +2,7 @@
 
 namespace CoffeeShop.Features.Product;
 
-public class ProductRequest
+public class CreateProductRequest
 {
     [Required(ErrorMessage = "Cần tên của sản phẩm")]
     [StringLength(100, ErrorMessage = "Tên không được dài quá 100 kí tự.")]

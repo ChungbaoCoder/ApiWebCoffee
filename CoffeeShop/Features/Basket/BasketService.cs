@@ -1,5 +1,6 @@
 ﻿using CoffeeShop.Database;
 using CoffeeShop.Entities.GroupBasket;
+using CoffeeShop.Features.CustomExceptions;
 using CoffeeShop.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,18 +16,30 @@ public class BasketService : IBasketService
 
     public async Task<BuyerBasket> AddItemToBasket(int basketId, int itemVariantId, int quantity = 1)
     {
-        var basket = await _context.Baskets.FindAsync(basketId);
+        var basket = await _context.Baskets.Include(b => b.Items).FirstOrDefaultAsync(b => b.BasketId == basketId);
 
         if (basket == null)
-            return null;
+            throw new NotFoundException("Không tìm thấy giỏ hàng");
 
-        var item = await _context.ItemVariants.FindAsync(itemVariantId);
+        var item = await _context.ItemVariants.FirstOrDefaultAsync(iv => iv.Status != Entities.GroupItem.ItemStatus.Inactive && iv.ItemVariantId == itemVariantId);
 
         if (item == null)
-            return null;
+            throw new NotFoundException("Không tìm thấy sản phẩm để thêm vào");
 
-        basket.AddItem(itemVariantId, item.Price, quantity);
-        await _context.SaveChangesAsync();
+        if (item.StockQuantity >= quantity && item.StockQuantity > 0)
+        {
+            item.AddQuantity(-quantity);
+            basket.AddItem(itemVariantId, item.Price, quantity);
+            await _context.SaveChangesAsync();
+        }
+        else if (item.StockQuantity <= quantity)
+        {
+            quantity = item.StockQuantity;
+            item.AddQuantity(-quantity);
+            basket.AddItem(itemVariantId, item.Price, quantity);
+            await _context.SaveChangesAsync();
+        }
+
         return basket;
     }
 
@@ -37,7 +50,12 @@ public class BasketService : IBasketService
         if (basket == null)
             return false;
 
-        basket.RemoveItem(itemVariantId);
+        var item = await _context.ItemVariants.FirstOrDefaultAsync(iv => iv.Status != Entities.GroupItem.ItemStatus.Inactive && iv.ItemVariantId == itemVariantId);
+
+        if (item == null)
+            return false;
+
+        item.AddQuantity(basket.RemoveItem(itemVariantId));
         await _context.SaveChangesAsync();
         return true;
     }
@@ -47,7 +65,7 @@ public class BasketService : IBasketService
         var buyer = await _context.Buyer.FindAsync(buyerId);
 
         if (buyer == null)
-            return null;
+            throw new NotFoundException("Không tìm thấy người mua");
 
         var newbasket = new BuyerBasket(buyerId);
         await _context.Baskets.AddAsync(newbasket);
@@ -57,11 +75,25 @@ public class BasketService : IBasketService
 
     public async Task<bool> DeleteAllItems(int basketId)
     {
-        var basket = await _context.Baskets.FindAsync(basketId);
+        var basket = await _context.Baskets.Include(b => b.Items).FirstOrDefaultAsync(b => b.BasketId == basketId);
+
         if (basket == null)
             return false;
 
-        basket.RemoveAllItems();
+        var restoreItem = basket.RemoveAllItems();
+        var itemVariantKey = restoreItem.Keys;
+
+        if (restoreItem.Count != 0)
+        {
+            var items = await _context.ItemVariants.Where(iv => itemVariantKey.Contains(iv.ItemVariantId)).ToListAsync();
+
+            foreach (var item in restoreItem)
+            {
+                var itemToUpdate = items.First(i => i.ItemVariantId == item.Key);
+                itemToUpdate.AddQuantity(item.Value);
+            }
+        }
+
         await _context.SaveChangesAsync();
         return true;
     }
@@ -86,8 +118,9 @@ public class BasketService : IBasketService
     public async Task<BuyerBasket> ViewBasket(int basketId)
     {
         var basket = await _context.Baskets.Include(b => b.Items).AsNoTracking().FirstOrDefaultAsync(b => b.BasketId == basketId);
+
         if (basket == null)
-            return null;
+            throw new NotFoundException("Không tìm thấy giỏ hàng");
 
         return basket;
     }

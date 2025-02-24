@@ -9,5 +9,5 @@ public interface IOrderService
     Task<bool> DeleteOrder(int orderId);
     Task<bool> DeleteManyOrders(List<int> orderId);
     Task<BuyerOrder> GetOrderById(int orderId);
-    Task<List<BuyerOrder>> GetOrderByBuyerId(int buyerId);
+    Task<IEnumerable<BuyerOrder>> GetOrderByBuyerId(int buyerId);
 }

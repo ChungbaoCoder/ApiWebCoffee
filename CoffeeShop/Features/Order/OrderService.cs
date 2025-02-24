@@ -1,5 +1,6 @@
 ﻿using CoffeeShop.Database;
 using CoffeeShop.Entities.GroupOrder;
+using CoffeeShop.Features.CustomExceptions;
 using CoffeeShop.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,27 +47,34 @@ public class OrderService : IOrderService
         var buyer = await _context.Buyer.FirstOrDefaultAsync(b => b.BuyerId == buyerId && b.DeletedAt == null);
 
         if (buyer == null)
-            return null;
+            throw new NotFoundException("Không tìm thầy người mua");
 
         var address = await _context.Address.FirstOrDefaultAsync(a => a.BuyerId == buyerId);
 
+        if (address == null)
+            throw new NotFoundException("Không tìm thấy địa chỉ giao hàng của khách");
+
         var order = new BuyerOrder(buyerId, orderItems);
-        order.Address.UpdateShippingAddress(address.Street, address.City, address.State, address.Country);
+        order.UpdateShippingAddress(address);
         order.SetTotal();
         await _context.Orders.AddAsync(order);
         await _context.SaveChangesAsync();
         return order;
     }
 
-    public async Task<List<BuyerOrder>> GetOrderByBuyerId(int buyerId)
+    public async Task<IEnumerable<BuyerOrder>> GetOrderByBuyerId(int buyerId)
     {
         var orders = await _context.Orders.Include(o => o.OrderItems).Where(o => o.BuyerId == buyerId && o.DeletedAt == null).AsNoTracking().ToListAsync();
+
+        if (orders == null)
+            return [];
+
         return orders;
     }
 
     public async Task<BuyerOrder> GetOrderById(int orderId)
     {
-        var order = await _context.Orders.Include(o => o.OrderItems).Where(o => o.OrderId == orderId && o.DeletedAt == null).AsNoTracking().FirstOrDefaultAsync();
+        var order = await _context.Orders.Include(o => o.OrderItems).AsNoTracking().FirstOrDefaultAsync(o => o.OrderId == orderId && o.DeletedAt == null);
 
         if (order == null)
             return null;

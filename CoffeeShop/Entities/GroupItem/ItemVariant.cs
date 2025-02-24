@@ -28,7 +28,7 @@ public class ItemVariant
     {
         UpdateVariant(size, price);
         SetQuantity(stockQuantity);
-        SetStatus(status);
+        Status = status;
     }
 
     public void UpdateVariant(string size, decimal price)
@@ -37,18 +37,38 @@ public class ItemVariant
         Price = price;
     }
 
+    public void AddQuantity(int stockQuantity)
+    {
+        StockQuantity += stockQuantity;
+        SetStatusForQuantity();
+    }
+
     public void SetQuantity(int stockQuantity)
     {
         StockQuantity = stockQuantity;
+        SetStatusForQuantity();
     }
 
     public void SetStatus(ItemStatus status)
+    {
+        Status = status;
+    }
+
+    private void SetStatusForQuantity()
     {
         if (StockQuantity < 1)
             Status = ItemStatus.OutOfStock;
         else if (StockQuantity < 10)
             Status = ItemStatus.LowStock;
-        else
-            Status = status;
+    }
+
+    public void MarkDeletion()
+    {
+        DeletedAt = DateTime.Now;
+    }
+
+    public void UnMarkDeletion()
+    {
+        DeletedAt = null;
     }
 }

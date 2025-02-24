@@ -7,7 +7,7 @@ public class SeedRole
 {
     public static async Task SeedAdminUser(IServiceProvider serviceProvider, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
     {
-        string[] roleNames = { "User", "Admin", "Customer" };
+        string[] roleNames = { "Moderator", "Admin", "Customer" };
 
         foreach (var roleName in roleNames)
         {

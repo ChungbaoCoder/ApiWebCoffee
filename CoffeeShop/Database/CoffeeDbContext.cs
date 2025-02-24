@@ -16,7 +16,6 @@ public class CoffeeDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<ProductItem> Products { get; set; }
-    //public DbSet<Topping> Toppings { get; set; }
     public DbSet<ItemVariant> ItemVariants { get; set; }
     public DbSet<BuyerBasket> Baskets { get; set; }
     public DbSet<BasketItem> BasketItems { get; set; }
@@ -24,6 +23,7 @@ public class CoffeeDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<BuyerUser> Buyer { get; set; }
     public DbSet<Address> Address { get; set; }
+    public DbSet<CustomerAuth> CustomerAuths { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

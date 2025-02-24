@@ -18,23 +18,29 @@ public class BasketController : Controller
     [HttpGet("{basketId}")]
     public async Task<ActionResult<BuyerBasket>> GetBasketById(int basketId)
     {
-        var basket = await _basketService.ViewBasket(basketId);
-
-        if (basket == null)
-            return NotFound(new Response<object>(RequestMessage.Text("Tìm giỏ hàng bằng id"), HttpStatusCode.NotFound, "Giỏ hàng không tìm thấy."));
-
-        return Ok(new Response<BuyerBasket>(RequestMessage.Text("Tìm giỏ hàng bằng id"), HttpStatusCode.OK, "Tìm giỏ hàng thành công.", basket));
+        try
+        {
+            var basket = await _basketService.ViewBasket(basketId);
+            return Ok(new Response<BuyerBasket>(RequestMessage.Text("Tìm giỏ hàng bằng id"), HttpStatusCode.OK, "Tìm giỏ hàng thành công.", basket));
+        }
+        catch (Exception ex)
+        {
+            return NotFound(new Response<object>(RequestMessage.Text("Tìm giỏ hàng bằng id"), HttpStatusCode.NotFound, ex.Message));
+        }    
     }
 
     [HttpPost]
-    public async Task<ActionResult<BuyerBasket>> CreateBasketForUser(int buyerId)
+    public async Task<ActionResult<BuyerBasket>> CreateBasketForUser([FromBody] int buyerId)
     {
-        var basket = await _basketService.CreateBasketForUser(buyerId);
-
-        if (basket == null)
-            return NotFound(new Response<object>(RequestMessage.Text("Tạo giỏ hàng cho người dùng"), HttpStatusCode.NotFound, "Người mua không tìm thấy."));
-
-        return Created(Request.Path, new Response<BuyerBasket>(RequestMessage.Text("Tạo giỏ hàng cho người dùng"), HttpStatusCode.Created,  "Tạo giỏ hàng thành công."));
+        try
+        {
+            var basket = await _basketService.CreateBasketForUser(buyerId);
+            return Created(Request.Path, new Response<BuyerBasket>(RequestMessage.Text("Tạo giỏ hàng cho người dùng"), HttpStatusCode.Created, "Tạo giỏ hàng thành công."));
+        }
+        catch (Exception ex)
+        {
+            return NotFound(new Response<object>(RequestMessage.Text("Tạo giỏ hàng cho người dùng"), HttpStatusCode.NotFound, ex.Message));
+        }    
     }
 
     [HttpPost("{basketId}/items")]
@@ -52,10 +58,11 @@ public class BasketController : Controller
 
             await ClearBasket(basketId);
             return Ok(new Response<BuyerBasket>(RequestMessage.Text("Thêm sản phẩm vào giỏ hàng"), HttpStatusCode.OK, "Sản phẩm thêm vào thành công.", basket));
+
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new Response<object>(RequestMessage.Text("Thêm sản phẩm vào giỏ hàng"), HttpStatusCode.InternalServerError, $"Lỗi: {ex.Message}."));
+            return BadRequest(new Response<object>(RequestMessage.Text("Thêm sản phẩm vào giỏ hàng"), HttpStatusCode.BadRequest, ex.Message));
         }
     }
 

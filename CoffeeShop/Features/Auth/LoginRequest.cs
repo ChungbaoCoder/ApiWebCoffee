@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace CoffeeShop.Features.Auth;
 
@@ -8,5 +9,6 @@ public class LoginRequest
     [EmailAddress(ErrorMessage = "Không đúng định dạng email")]
     public string Email { get; set; } = string.Empty;
     [Required(ErrorMessage = "Mật khẩu cần phải có")]
+    [PasswordPropertyText]
     public string Password { get; set; } = string.Empty;
 }
