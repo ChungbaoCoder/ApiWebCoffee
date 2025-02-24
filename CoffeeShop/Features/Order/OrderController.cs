@@ -38,17 +38,17 @@ public class OrderController : Controller
         return Ok(new Response<BuyerOrder>(RequestMessage.Text("Lấy hóa đơn bằng id"), HttpStatusCode.OK, "Trả về hóa đơn thành công.", order));
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] OrderRequest request)
+    [HttpPost("buyer/{id}")]
+    public async Task<IActionResult> CreateOrder(int id, [FromBody] List<OrderItemRequest> request)
     {
         if (!ModelState.IsValid)
             return BadRequest(new Response<object>(RequestMessage.Text("Tạo hóa đơn mới cho người mua"), HttpStatusCode.BadRequest, "Dữ liệu không hợp lệ."));
 
         try
         {
-            var listOrderItems = request.OrderItems.Select(oi => new OrderItem(oi.ItemVariantId, oi.Price, oi.Quantity)).ToList();
+            var listOrderItems = request.Select(oi => new OrderItem(oi.ItemVariantId, oi.Price, oi.Quantity)).ToList();
 
-            var result = await _orderService.CreateOrder(request.BuyerId, listOrderItems);
+            var result = await _orderService.CreateOrder(id, listOrderItems);
 
             if (result == null)
                 return NotFound(new Response<object>(RequestMessage.Text("Tạo hóa đơn mới cho người mua"), HttpStatusCode.NotFound, "Khách hàng không tìm thấy."));
@@ -61,7 +61,7 @@ public class OrderController : Controller
         }
     }
 
-    [HttpPut("{id}")]
+    [HttpPatch("{id}")]
     public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] OrderStatusRequest request)
     {
         var result = await _orderService.UpdateOrderStatus(id, request.OrderStatus, request.PaymentStatus);

@@ -31,6 +31,11 @@ public class OrderItem
         UpdateItemStatus();
     }
 
+    public void SetPrice(decimal price)
+    {
+        Price = price;
+    }
+
     public void UpdateItemStatus(OrderItemStatus status = OrderItemStatus.Pending)
     {
         OrderItemStatus = status;

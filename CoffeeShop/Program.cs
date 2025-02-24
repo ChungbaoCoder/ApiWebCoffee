@@ -41,6 +41,16 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(o =>
 .AddEntityFrameworkStores<CoffeeDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddAuthentication(o =>
 {
     o.DefaultAuthenticateScheme = "JswToken";
@@ -90,6 +100,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowReact");
 
 app.UseHttpsRedirection();
 

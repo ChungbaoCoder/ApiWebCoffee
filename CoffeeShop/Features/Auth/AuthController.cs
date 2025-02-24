@@ -16,7 +16,7 @@ public class AuthController : Controller
         _authService = authService;
     }
 
-    [HttpPost("users/register")]
+    [HttpPost("user/register")]
     public async Task<ActionResult<TokenResponse>> Register([FromBody] AuthRequest request)
     {
         if (!ModelState.IsValid)
@@ -32,7 +32,7 @@ public class AuthController : Controller
         return Created(Request.Path, new Response<TokenResponse>(RequestMessage.Text("Đăng kí người dùng mới"), HttpStatusCode.Created, "Người dùng đã được tạo.", result));
     }
 
-    [HttpPost("users/login")]
+    [HttpPost("user/login")]
     public async Task<ActionResult<TokenResponse>> Login([FromBody] LoginRequest request)
     {
         if (!ModelState.IsValid)

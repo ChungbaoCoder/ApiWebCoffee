@@ -89,8 +89,8 @@ public class BuyerController : Controller
         }
     }
 
-    [HttpPut("{buyerId}/address")]
-    public async Task<ActionResult<Address>> UpdateAddress(int buyerId, [FromBody] AddressRequest request)
+    [HttpPut("{buyerId}/address/{id}")]
+    public async Task<ActionResult<Address>> UpdateAddress(int buyerId, int addressId, [FromBody] AddressRequest request)
     {
         var result = await _buyerService.UpdateAddress(buyerId, new Address(request.Street, request.City, request.State, request.Country));
 
@@ -100,7 +100,7 @@ public class BuyerController : Controller
         return Ok(new Response<Address>(RequestMessage.Text("Cập nhật địa chỉ của người mua"), HttpStatusCode.OK, "Cập nhật địa chỉ thành công.", result));
     }
 
-    [HttpPut("{buyerId}/address/{id}")]
+    [HttpPatch("{buyerId}/address/{id}")]
     public async Task<ActionResult<BuyerUser>> SetDefaultAddress(int buyerId, int id)
     {
         var result = await _buyerService.SetDefaultAddress(buyerId, id);

@@ -54,9 +54,26 @@ public class OrderService : IOrderService
         if (address == null)
             throw new NotFoundException("Không tìm thấy địa chỉ giao hàng của khách");
 
-        var order = new BuyerOrder(buyerId, orderItems);
+        var itemIdsFromOrder = orderItems.Select(oi => oi.ItemVariantId).ToList();
+        var items = await _context.ItemVariants.Where(iv => itemIdsFromOrder.Contains(iv.ItemVariantId)).ToListAsync();
+        var lookUp = items.ToDictionary(i => i.ItemVariantId, i => i);
+
+        var vaildOrderItem = new List<OrderItem>();
+
+        foreach (var orderItem in orderItems)
+        {
+            if (lookUp.TryGetValue(orderItem.ItemVariantId, out var item))
+            {
+                if (orderItem.Price != item.Price)
+                    orderItem.SetPrice(item.Price);
+            }
+            vaildOrderItem.Add(orderItem);
+        }
+
+        var order = new BuyerOrder(buyerId, vaildOrderItem);
         order.UpdateShippingAddress(address);
         order.SetTotal();
+
         await _context.Orders.AddAsync(order);
         await _context.SaveChangesAsync();
         return order;

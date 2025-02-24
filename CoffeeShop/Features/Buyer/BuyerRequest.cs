@@ -13,4 +13,6 @@ public class BuyerRequest
     [Required(ErrorMessage = "Cần phải có số điện thoại")]
     [StringLength(20, ErrorMessage = "Số điện thoại không được dài quá 100 kí tự.")]
     public string PhoneNum { get; set; } = string.Empty;
+
+    //^[\d\s.\-]{7,}$
 }

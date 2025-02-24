@@ -43,7 +43,7 @@ public class BasketController : Controller
         }    
     }
 
-    [HttpPost("{basketId}/items")]
+    [HttpPost("{basketId}/item")]
     public async Task<IActionResult> AddItemToBasket(int basketId, [FromBody] BasketItemRequest request)
     {
         if (!ModelState.IsValid)
@@ -66,7 +66,7 @@ public class BasketController : Controller
         }
     }
 
-    [HttpDelete("{basketId}/product/{id}")]
+    [HttpDelete("{basketId}/item/{id}")]
     public async Task<IActionResult> RemoveItemFromBasket(int basketId, int id)
     {
         var result = await _basketService.RemoveItemFromBasket(basketId, id);
