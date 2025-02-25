@@ -1,13 +1,7 @@
 import axios from 'axios';
 import { LoginPost, RegisterPost } from './models/authPost';
 
-const BASE_URL = 'https://localhost:7055/api/auth/user';
-
-const header = {
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-    }
-};
+const BASE_URL = 'https://localhost:7055/api/auth/customer';
 
 export const register = async (registerRequest: RegisterPost) => {
     try {

@@ -1,16 +1,24 @@
 export interface Product {
-	id: number,
+	productId: number,
     name: string,
     description: string,
     category: string,
-    imageUrl?: string,
-	detail: ItemVariant[]
+    imageUri?: string,
+	itemVariant: ItemVariant[]
 }
 
 export interface ItemVariant {
-	id: number,
+	itemVariantId: number,
 	size: string,
-	stock: number,
+	stockQuantity: number,
 	price: number,
-	status: string
+	status: Status
 }
+
+export enum Status{
+    NotSet,
+    Active,
+    Inactive,
+    LowStock,
+    OutOfStock
+};

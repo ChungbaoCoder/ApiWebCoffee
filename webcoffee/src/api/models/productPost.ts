@@ -4,13 +4,13 @@ export interface ProductPost{
     name: string,
     description: string,
     category: string,
-    imgUri?: string,
-    items: ItemVariantPost[]
+    pictureUri?: string,
+    itemVariant: ItemVariantPost[]
 };
 
 export interface ItemVariantPost{
     size: string,
-	stock: number,
+	stockQuantity: number,
 	price: number,
 	status: Status
 };

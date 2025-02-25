@@ -9,10 +9,6 @@ namespace CoffeeShop.Database.Configurations
         public void Configure(EntityTypeBuilder<RefreshToken> builder)
         {
             builder.HasKey(rt => rt.RefreshTokenId);
-
-            builder.HasOne(rt => rt.User)
-                .WithMany()
-                .HasForeignKey(rt => rt.UserId);
         }
     }
 }

@@ -5,7 +5,7 @@ export interface Basket{
 };
 
 export interface BasketItems{
-    itemId: number,
+    itemVariantId: number,
     price: number,
     quantity: number
 };

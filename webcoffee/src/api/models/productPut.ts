@@ -4,12 +4,12 @@ export interface ProductPut{
     name: string,
     description: string,
     category: string,
-    imgUri?: string
+    pictureUri?: string
 };
 
 export interface ItemVariantPut{
     size: string,
-    stock: number,
+    stockQuantity: number,
     price: number,
     status: Status
 };

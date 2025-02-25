@@ -18,20 +18,13 @@ public class IdentityConfiguration : IEntityTypeConfiguration<CustomerAuth>
                 .IsRequired()
                 .HasColumnType("nvarchar(450)");
 
-        builder.Property(c => c.Role)
-            .HasConversion(
-                v => v.ToString(),
-                v => (UserRoleType)Enum.Parse(typeof(UserRoleType), v))
-            .HasColumnType("varchar(20)");
+        builder.Property(c => c.Password)
+            .IsRequired()
+            .HasColumnType("nvarchar(max)");
 
         builder.HasOne(c => c.BuyerUser)
-            .WithMany()
-            .HasForeignKey(c => c.BuyerId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(c => c.AspNetUser)
-            .WithMany()
-            .HasForeignKey(e => e.AspNetUserId)
+            .WithOne(b => b.CustomerAuth)
+            .HasForeignKey<CustomerAuth>(c => c.BuyerId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

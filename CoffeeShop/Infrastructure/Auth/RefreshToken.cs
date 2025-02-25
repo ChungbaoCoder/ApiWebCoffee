@@ -11,9 +11,5 @@ public class RefreshToken
     public bool IsRevoked { get; set; }
     public DateTime DateAdded { get; set; }
     public DateTime DateExpired { get; set; }
-
-    [JsonIgnore]
     public string UserId { get; set; } = string.Empty;
-    [JsonIgnore]
-    public ApplicationUser User { get; set; }
 }

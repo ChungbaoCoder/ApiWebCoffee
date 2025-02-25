@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using CoffeeShop.Entities.GroupBasket;
 using CoffeeShop.Entities.GroupOrder;
+using CoffeeShop.Infrastructure.Auth;
 
 namespace CoffeeShop.Entities.GroupBuyer;
 
@@ -19,6 +20,8 @@ public class BuyerUser
     public List<BuyerOrder> Orders = new List<BuyerOrder>();
     [JsonIgnore]
     public DateTime? DeletedAt { get; private set; }
+    [JsonIgnore]
+    public virtual CustomerAuth CustomerAuth { get; private set; }
 
     //Dành cho tương lai thêm chức năng thanh toán
     //private List<PaymentMethod> _paymentMethods = new List<PaymentMethod>();

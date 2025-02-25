@@ -12,7 +12,7 @@ const header = {
 
 export const getProductList = async (page: number = 1, pageSize: number = 10) => {
     try {
-        const response = await axios.get(`${BASE_URL}/${page}/${pageSize}`);
+        const response = await axios.get(`${BASE_URL}?page=${page}&pageSize=${pageSize}`);
         return response.data;
     } 
     catch (error) {
@@ -85,4 +85,4 @@ export const deleteProduct = async (productId: number) => {
       console.error(`Error deleting product with Id ${productId}:`, error);
       throw error;
     }
-  };
+};
