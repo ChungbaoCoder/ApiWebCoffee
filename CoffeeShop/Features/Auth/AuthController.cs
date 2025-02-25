@@ -17,19 +17,19 @@ public class AuthController : Controller
     }
 
     [HttpPost("user/register")]
-    public async Task<ActionResult<TokenResponse>> Register([FromBody] AuthRequest request)
+    public async Task<ActionResult<AuthRequest>> Register([FromBody] AuthRequest request)
     {
         if (!ModelState.IsValid)
             return BadRequest(new Response<object>(RequestMessage.Text("Đăng kí người dùng mới"), HttpStatusCode.BadRequest, "Dữ liệu không hợp lệ."));
 
         var result = await _authService.RegisterCustomer(request.Name, request.Email, request.PhoneNum, request.Password);
 
-        if (result == null)
+        if (result == false)
         {
             return BadRequest(new Response<object>(RequestMessage.Text("Đăng kí người dùng mới"), HttpStatusCode.BadRequest, $"Email {request.Email} của người dùng này đã có."));
         }
 
-        return Created(Request.Path, new Response<TokenResponse>(RequestMessage.Text("Đăng kí người dùng mới"), HttpStatusCode.Created, "Người dùng đã được tạo.", result));
+        return Created(Request.Path, new Response<AuthRequest>(RequestMessage.Text("Đăng kí người dùng mới"), HttpStatusCode.Created, "Người dùng đã được tạo.", request));
     }
 
     [HttpPost("user/login")]

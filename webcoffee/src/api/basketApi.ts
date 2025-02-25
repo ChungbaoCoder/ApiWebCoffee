@@ -42,6 +42,17 @@ export const addItemToBasket = async (basketId: number, basketItemPost: BasketIt
     }
 };
 
+export const mergeItemWhenLogin = async (basketId: number, basketItemsPost: BasketItemPost[]) => {
+    try {
+        const response = await axios.post(`${BASE_URL}/${basketId}/item/merge`, basketItemsPost);
+        return response.data;
+    } 
+    catch (error) {
+        console.error(`Error adding items to basket with Id ${basketId}:`, error);
+        throw error;
+    }
+};
+
 export const removeItemFromBasket = async (basketId: number, variantId: number) => {
     try {
         const response = await axios.delete(`${BASE_URL}/${basketId}/item/${variantId}`);
@@ -63,4 +74,3 @@ export const deleteAllItems = async (basketId: number) => {
         throw error;
     }
 };
-

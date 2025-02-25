@@ -1,5 +1,6 @@
 ﻿using CoffeeShop.Database;
 using CoffeeShop.Entities.GroupBasket;
+using CoffeeShop.Entities.GroupOrder;
 using CoffeeShop.Features.CustomExceptions;
 using CoffeeShop.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -122,6 +123,38 @@ public class BasketService : IBasketService
         if (basket == null)
             throw new NotFoundException("Không tìm thấy giỏ hàng");
 
+        return basket;
+    }
+
+    public async Task<BuyerBasket> MergeWhenLogin(int basketId, List<BasketItem> basketItems)
+    {
+        var basket = await _context.Baskets.Include(b => b.Items).FirstOrDefaultAsync(b => b.BasketId == basketId);
+
+        if (basket == null)
+            return null;
+
+        var itemIdsFromOrder = basketItems.Select(oi => oi.ItemVariantId).ToList();
+        var itemVariants = await _context.ItemVariants.Where(iv => itemIdsFromOrder.Contains(iv.ItemVariantId)).ToListAsync();
+        var lookUp = itemVariants.ToDictionary(i => i.ItemVariantId, i => i);
+
+        var vaildBasketItem = new List<BasketItem>();
+
+        foreach (var item in basketItems)
+        {
+            if (lookUp.TryGetValue(item.ItemVariantId, out var itemInLookUp))
+            {
+                if (item.Price != itemInLookUp.Price)
+                    item.SetPrice(itemInLookUp.Price);
+            }
+            vaildBasketItem.Add(item);
+        }
+
+        foreach (var item in vaildBasketItem)
+        {
+            basket.AddItem(item.ItemVariantId, item.Price, item.Quantity);
+        }
+
+        await _context.SaveChangesAsync();
         return basket;
     }
 }

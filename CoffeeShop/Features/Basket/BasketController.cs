@@ -44,7 +44,7 @@ public class BasketController : Controller
     }
 
     [HttpPost("{basketId}/item")]
-    public async Task<IActionResult> AddItemToBasket(int basketId, [FromBody] BasketItemRequest request)
+    public async Task<ActionResult<BuyerBasket>> AddItemToBasket(int basketId, [FromBody] BasketItemRequest request)
     {
         if (!ModelState.IsValid)
             return BadRequest(new Response<object>(RequestMessage.Text("Thêm sản phẩm vào giỏ hàng"), HttpStatusCode.BadRequest, "Dữ liệu không hợp lệ."));
@@ -64,6 +64,21 @@ public class BasketController : Controller
         {
             return BadRequest(new Response<object>(RequestMessage.Text("Thêm sản phẩm vào giỏ hàng"), HttpStatusCode.BadRequest, ex.Message));
         }
+    }
+
+    [HttpPost("{id}/item/merge")]
+    public async Task<ActionResult<BuyerBasket>> MergeBasket(int id, [FromBody] List<BasketMergeRequest> requests)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(new Response<object>(RequestMessage.Text("Thêm sản phẩm vào giỏ hàng"), HttpStatusCode.BadRequest, "Dữ liệu không hợp lệ."));
+
+        var items = requests.Select(r => new BasketItem(r.ItemVariantId, r.Price, r.Quantity)).ToList();
+        var basket = await _basketService.MergeWhenLogin(id, items);
+
+        if (basket == null)
+            return NotFound(new Response<object>(RequestMessage.Text("Thêm sản phẩm vào giỏ hàng"), HttpStatusCode.NotFound, "Giỏ hàng không tìm thấy."));
+
+        return Ok(new Response<BuyerBasket>(RequestMessage.Text("Thêm sản phẩm vào giỏ hàng"), HttpStatusCode.OK, "Sản phẩm thêm vào thành công.", basket));
     }
 
     [HttpDelete("{basketId}/item/{id}")]

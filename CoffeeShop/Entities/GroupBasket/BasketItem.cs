@@ -34,4 +34,9 @@ public class BasketItem
     {
         Quantity = quantity;
     }
+
+    public void SetPrice(decimal price)
+    {
+        Price = price;
+    }
 }

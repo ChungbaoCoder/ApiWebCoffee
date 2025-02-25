@@ -26,12 +26,12 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
 
-    public async Task<TokenResponse> RegisterCustomer(string userName, string email, string phoneNum, string password)
+    public async Task<bool> RegisterCustomer(string userName, string email, string phoneNum, string password)
     {
         var existBuyer = await _context.Buyer.FirstOrDefaultAsync(b => b.Email == email && b.PhoneNum == phoneNum);
 
         if (existBuyer != null)
-            return null;
+            return false;
 
         var user = new ApplicationUser
         {
@@ -59,9 +59,9 @@ public class AuthService : IAuthService
 
             await _context.CustomerAuths.AddAsync(customer);
             await _context.SaveChangesAsync();
-            return await GenerateJwtToken(user);
+            return true;
         }
-        return null;
+        return false;
     }
 
     public async Task<TokenResponse> LoginUser(string email, string password)
@@ -76,17 +76,18 @@ public class AuthService : IAuthService
         if (!login.Succeeded)
             return null;
 
-        return await GenerateJwtToken(user);
+        var buyer = await _context.CustomerAuths.FirstAsync(ca => ca.AspNetUserId == user.Id);
+
+        return await GenerateJwtToken(buyer);
     }
 
-    private async Task<TokenResponse> GenerateJwtToken(ApplicationUser user)
+    private async Task<TokenResponse> GenerateJwtToken(CustomerAuth user)
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+            new Claim(ClaimTypes.Sid, user.BuyerId.ToString()),
+            new Claim(ClaimTypes.PrimarySid, user.AspNetUserId.ToString()),
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -106,7 +107,7 @@ public class AuthService : IAuthService
         {
             JwtId = token.Id,
             IsRevoked = false,
-            UserId = user.Id,
+            UserId = user.BuyerId.ToString(),
             DateAdded = DateTime.Now,
             DateExpired = DateTime.Now.AddHours(6),
             Token = Guid.NewGuid().ToString() + "-" + Guid.NewGuid().ToString()
