@@ -9,8 +9,8 @@ export interface ProductPost{
 };
 
 export interface ItemVariantPost{
-    size: string,
-	stockQuantity: number,
-	price: number,
+    size?: string,
+	stockQuantity?: number,
+	price?: number,
 	status: Status
 };

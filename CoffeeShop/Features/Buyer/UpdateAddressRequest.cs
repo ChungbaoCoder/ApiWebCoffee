@@ -2,7 +2,7 @@
 
 namespace CoffeeShop.Features.Buyer;
 
-public class AddressRequest
+public class UpdateAddressRequest
 {
     [Required(ErrorMessage = "Cần id địa chỉ")]
     [Range(1, double.MaxValue, ErrorMessage = "Mã địa chỉ không được là số âm")]

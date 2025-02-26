@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { register } from '../../api//authApi';
-import { RegisterPost } from '../../api/models/authPost'
+import React, { useState } from "react";
+import { loginCustomer } from "../../api/authApi";
+import { TokenResponse } from "../../api/models/authPost";
+import { LoginPost } from "../../api/models/authPost";
 
-const RegisterForm: React.FC = () => {
-    const [name, setName] = useState<string>('');
+const CustomerLoginForm: React.FC = () => {
     const [email, setEmail] = useState<string>('');
-    const [phoneNum, setPhoneNum] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -15,40 +14,30 @@ const RegisterForm: React.FC = () => {
         setSuccessMessage(null);
         setErrorMessage(null);
 
-        const registerRequest: RegisterPost = {
-            name,
+        const loginRequest: LoginPost = {
             email,
-            phoneNum,
             password,
         };
 
         try {
-            await register(registerRequest);
-            setSuccessMessage('Registration successful! You can now log in.');
-            // Optionally clear the form after successful registration
-            setName('');
+            const response = await loginCustomer(loginRequest); // Use the 'loginCustomer' API
+            const tokenResponse: TokenResponse = response.data;
+            setSuccessMessage('Customer Login successful!'); // Updated message
+            console.log('Customer Login successful!', tokenResponse);
+            localStorage.setItem('authToken', tokenResponse.token); // Store token in localStorage (insecure for production)
+            // In a real app, you'd likely redirect to a protected page or update user context
             setEmail('');
-            setPhoneNum('');
             setPassword('');
         } catch (error: any) {
-            setErrorMessage(`Registration failed: ${error.message}`);
+            setErrorMessage(`Customer Login failed: ${error.message}`); // Updated message
         }
     };
 
     return (
         <div>
-            <h3>Register</h3>
+            <h3>Login as Customer</h3> {/* Updated heading */}
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="name">Name:</label>
-                    <input
-                        type="text"
-                        id="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
-                </div>
+                {/* Form fields (same as before) */}
                 <div>
                     <label htmlFor="email">Email:</label>
                     <input
@@ -56,16 +45,6 @@ const RegisterForm: React.FC = () => {
                         id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="phoneNum">Phone Number:</label>
-                    <input
-                        type="tel"
-                        id="phoneNum"
-                        value={phoneNum}
-                        onChange={(e) => setPhoneNum(e.target.value)}
                         required
                     />
                 </div>
@@ -79,7 +58,7 @@ const RegisterForm: React.FC = () => {
                         required
                     />
                 </div>
-                <button type="submit">Register</button>
+                <button type="submit">Login Customer</button> {/* Updated button text */}
 
                 {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
@@ -88,4 +67,4 @@ const RegisterForm: React.FC = () => {
     );
 };
 
-export default RegisterForm;
+export default CustomerLoginForm;

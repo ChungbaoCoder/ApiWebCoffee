@@ -1,12 +1,14 @@
 ﻿using System.Net;
 using CoffeeShop.Entities.GroupBasket;
 using CoffeeShop.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeShop.Features.Basket;
 
 [ApiController]
 [Route("api/basket")]
+[Authorize(AuthenticationSchemes = "JwsToken", Policy = "Customer")]
 public class BasketController : Controller
 {
     private readonly IBasketService _basketService;

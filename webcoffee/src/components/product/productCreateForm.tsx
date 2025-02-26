@@ -12,21 +12,38 @@ const ProductCreateForm: React.FC<ProductCreateFormProps> = ({ onProductCreated 
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [category, setCategory] = useState<string>('');
-    const [pictureUri, setImgUri] = useState<string>('');
-    const [size, setSize] = useState<string>('');
-    const [stockQuantity, setStock] = useState<number | undefined>(undefined);
-    const [price, setPrice] = useState<number | undefined>(undefined);
+    const [pictureUri, setPictureUri] = useState<string>('');
+    const [variants, setVariants] = useState<ItemVariantPost[]>([{ size: '', stockQuantity: undefined, price: undefined, status: Status.Active }]); // Array of variants
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const handleAddVariant = () => {
+        setVariants([...variants, { size: '', stockQuantity: undefined, price: undefined, status: Status.Active }]);
+    };
+
+    const handleRemoveVariant = (index: number) => {
+        const updatedVariants = variants.filter((_, i) => i !== index);
+        setVariants(updatedVariants);
+    };
+
+    const handleVariantChange = (index: number, field: keyof ItemVariantPost, value: any) => {
+        const updatedVariants = variants.map((variant, i) =>
+            i === index ? { ...variant, [field]: value } : variant
+        );
+        setVariants(updatedVariants);
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSuccessMessage(null);
         setErrorMessage(null);
 
-        if (stockQuantity === undefined || price === undefined) {
-            setErrorMessage("Stock and Price for variant are required.");
-            return;
+        // Basic client-side validation for variants
+        for (const variant of variants) {
+            if (variant.size === '' || variant.stockQuantity === undefined || variant.price === undefined || variant.stockQuantity < 0 || variant.price < 0) {
+                setErrorMessage("Please ensure all variants have valid Size, Stock (>=0), and Price (>=0).");
+                return;
+            }
         }
 
         const productPost: ProductPost = {
@@ -34,41 +51,28 @@ const ProductCreateForm: React.FC<ProductCreateFormProps> = ({ onProductCreated 
             description,
             category,
             pictureUri,
-            itemVariant: [{
-                size,
-                stockQuantity,
-                price,
-                status: Status.Active
-            }]
+            itemVariant: variants // Use the variants array from state
         };
+
+        console.log("Product Post Data:", productPost);
 
         try {
             const createdProductResponse = await createProduct(productPost);
-            const productId = createdProductResponse.data.productId;
-
-            const variantPost: ItemVariantPost = {
-                size,
-                stockQuantity,
-                price,
-                status: Status.Active
-            };
-            await createVariants(productId, variantPost);
+            console.log("Create Product Response:", createdProductResponse);
 
             setSuccessMessage('Product created successfully!');
             if (onProductCreated) {
                 onProductCreated();
             }
-
+            // Reset form
             setName('');
             setDescription('');
             setCategory('');
-            setImgUri('');
-            setSize('');
-            setStock(undefined);
-            setPrice(undefined);
-
+            setPictureUri('');
+            setVariants([{ size: '', stockQuantity: undefined, price: undefined, status: Status.Active }]); // Reset to one empty variant
         } catch (error: any) {
             setErrorMessage(`Error creating product: ${error.message}`);
+            console.error("Error creating product:", error);
         }
     };
 
@@ -89,23 +93,61 @@ const ProductCreateForm: React.FC<ProductCreateFormProps> = ({ onProductCreated 
                     <input type="text" id="category" value={category} onChange={(e) => setCategory(e.target.value)} required />
                 </div>
                 <div>
-                    <label htmlFor="imgUri">Image URL (Optional):</label>
-                    <input type="text" id="imgUri" value={pictureUri} onChange={(e) => setImgUri(e.target.value)} />
+                    <label htmlFor="pictureUri">Image URL (Optional):</label>
+                    <input type="text" id="pictureUri" value={pictureUri} onChange={(e) => setPictureUri(e.target.value)} />
                 </div>
-                <h4>Variant Information (At least one variant required)</h4>
-                <div>
-                    <label htmlFor="size">Size:</label>
-                    <input type="text" id="size" value={size} onChange={(e) => setSize(e.target.value)} required />
-                </div>
-                <div>
-                    <label htmlFor="stock">Stock:</label>
-                    <input type="number" id="stock" value={stockQuantity === undefined ? '' : stockQuantity} onChange={(e) => setStock(parseInt(e.target.value))} required />
-                </div>
-                <div>
-                    <label htmlFor="price">Price:</label>
-                    <input type="number" id="price" value={price === undefined ? '' : price} onChange={(e) => setPrice(parseFloat(e.target.value))} required />
-                </div>
-
+                <h4>Variants</h4>
+                {variants.map((variant, index) => (
+                    <div key={index} style={{ border: '1px solid #eee', padding: '10px', margin: '10px 0' }}>
+                        <h5>Variant #{index + 1}</h5>
+                        <div>
+                            <label htmlFor={`size-${index}`}>Size:</label>
+                            <input
+                                type="text"
+                                id={`size-${index}`}
+                                value={variant.size}
+                                onChange={(e) => handleVariantChange(index, 'size', e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor={`stockQuantity-${index}`}>Stock:</label>
+                            <input
+                                type="number"
+                                id={`stockQuantity-${index}`}
+                                value={variant.stockQuantity === undefined ? '' : variant.stockQuantity}
+                                onChange={(e) => handleVariantChange(index, 'stockQuantity', e.target.value === '' ? undefined : parseInt(e.target.value))}
+                                required
+                                min="0"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor={`price-${index}`}>Price:</label>
+                            <input
+                                type="number"
+                                id={`price-${index}`}
+                                value={variant.price === undefined ? '' : variant.price}
+                                onChange={(e) => handleVariantChange(index, 'price', e.target.value === '' ? undefined : parseFloat(e.target.value))}
+                                required
+                                min="0"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor={`status-${index}`}>Status:</label>
+                            <select
+                                id={`status-${index}`}
+                                value={variant.status}
+                                onChange={(e) => handleVariantChange(index, 'status', parseInt(e.target.value) as Status)}
+                            >
+                                {Object.keys(Status).filter(v => !isNaN(Number(v))).map((key) => (
+                                    <option key={key} value={Status[key as keyof typeof Status]}>{key}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <button type="button" onClick={() => handleRemoveVariant(index)}>Remove Variant</button>
+                    </div>
+                ))}
+                <button type="button" onClick={handleAddVariant}>Add Variant</button>
 
                 <button type="submit">Create Product</button>
 

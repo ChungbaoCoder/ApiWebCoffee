@@ -8,6 +8,7 @@ namespace CoffeeShop.Features.Order;
 
 [ApiController]
 [Route("api/order")]
+[Authorize(AuthenticationSchemes = "JwsToken", Policy = "Moderator")]
 public class OrderController : Controller
 {
     private readonly IOrderService _orderService;

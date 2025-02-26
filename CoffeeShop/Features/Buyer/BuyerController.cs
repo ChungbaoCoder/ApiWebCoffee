@@ -1,12 +1,14 @@
 ﻿using System.Net;
 using CoffeeShop.Entities.GroupBuyer;
 using CoffeeShop.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeShop.Features.Buyer;
 
 [ApiController]
 [Route("api/buyer")]
+[Authorize(AuthenticationSchemes = "JwsToken", Policy = "Moderator")]
 public class BuyerController : Controller
 {
     private readonly IBuyerService _buyerService;
@@ -55,7 +57,7 @@ public class BuyerController : Controller
     }
 
     [HttpPost("{buyerId}/address")]
-    public async Task<ActionResult<BuyerUser>> AddAddress(int buyerId, [FromBody] AddressRequest request)
+    public async Task<ActionResult<BuyerUser>> AddAddress(int buyerId, [FromBody] AddAddressRequest request)
     {
         if (!ModelState.IsValid)
             return BadRequest(new Response<object>(RequestMessage.Text("Thêm địa chỉ cho người mua"), HttpStatusCode.BadRequest, "Dữ liệu không hợp lệ."));
@@ -90,7 +92,7 @@ public class BuyerController : Controller
     }
 
     [HttpPut("{buyerId}/address/{id}")]
-    public async Task<ActionResult<Address>> UpdateAddress(int buyerId, int addressId, [FromBody] AddressRequest request)
+    public async Task<ActionResult<Address>> UpdateAddress(int buyerId, int addressId, [FromBody] UpdateAddressRequest request)
     {
         var result = await _buyerService.UpdateAddress(buyerId, new Address(request.Street, request.City, request.State, request.Country));
 

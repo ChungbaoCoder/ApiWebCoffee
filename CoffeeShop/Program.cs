@@ -77,14 +77,14 @@ builder.Services.AddAuthentication(o =>
 
 builder.Services.AddAuthorization(o =>
 {
-    o.AddPolicy("Admin", p =>
+    o.AddPolicy("Moderator", p =>
     {
-        p.RequireClaim(ClaimTypes.Role, "Admin");
+        p.RequireClaim(ClaimTypes.Role, "Moderator");
     });
 
-    o.AddPolicy("User", p =>
+    o.AddPolicy("Customer", p =>
     {
-        p.RequireClaim(ClaimTypes.Role, "User");
+        p.RequireClaim(ClaimTypes.Role, "Customer");
     });
 });
 
