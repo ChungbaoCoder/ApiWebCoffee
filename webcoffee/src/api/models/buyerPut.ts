@@ -5,6 +5,7 @@ export interface BuyerPut {
 }
 
 export interface AddressPut {
+    addressId: number,
     street: string,
     city: string,
     state: string,

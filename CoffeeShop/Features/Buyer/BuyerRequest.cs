@@ -11,8 +11,6 @@ public class BuyerRequest
     [EmailAddress(ErrorMessage = "Không đúng định dạng email")]
     public string Email { get; set; } = string.Empty;
     [Required(ErrorMessage = "Cần phải có số điện thoại")]
-    [StringLength(20, ErrorMessage = "Số điện thoại không được dài quá 100 kí tự.")]
+    [RegularExpression("^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$", ErrorMessage = "Số điện thoại không phù hợp")]
     public string PhoneNum { get; set; } = string.Empty;
-
-    //^[\d\s.\-]{7,}$
 }

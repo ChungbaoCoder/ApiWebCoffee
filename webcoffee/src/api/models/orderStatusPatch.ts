@@ -1,6 +1,6 @@
-import { OrderItemStatus, OrderStatus } from "./globalEnum";
+import { OrderItemStatus, OrderStatus, PaymentStatus } from "./globalEnum";
 
 export interface OrderStatusPatch {
     orderStatus: OrderStatus,
-    orderItemStatus: OrderItemStatus
+    paymentStatus: PaymentStatus
 };

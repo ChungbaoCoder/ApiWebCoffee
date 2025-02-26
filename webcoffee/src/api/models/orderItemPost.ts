@@ -1,5 +1,5 @@
 export interface OrderItemPost {
-    variantId: number,
-    price: number,
+    itemVariantId?: number,
+    price?: number,
     quantity: number
 };

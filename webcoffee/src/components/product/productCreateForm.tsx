@@ -5,7 +5,7 @@ import { ProductPut, ItemVariantPut } from '../../api/models/productPut';
 import { Status } from '../../api/models/globalEnum';
 
 interface ProductCreateFormProps {
-    onProductCreated?: () => void; // Optional callback for when a product is created
+    onProductCreated?: () => void;
 }
 
 const ProductCreateForm: React.FC<ProductCreateFormProps> = ({ onProductCreated }) => {
@@ -38,15 +38,14 @@ const ProductCreateForm: React.FC<ProductCreateFormProps> = ({ onProductCreated 
                 size,
                 stockQuantity,
                 price,
-                status: Status.Active // Default status to Active for simplicity
+                status: Status.Active
             }]
         };
 
         try {
             const createdProductResponse = await createProduct(productPost);
-            const productId = createdProductResponse.data.productId; // Assuming API returns productId in response data
+            const productId = createdProductResponse.data.productId;
 
-            // Create variants (for now, just one variant from form)
             const variantPost: ItemVariantPost = {
                 size,
                 stockQuantity,
@@ -57,9 +56,9 @@ const ProductCreateForm: React.FC<ProductCreateFormProps> = ({ onProductCreated 
 
             setSuccessMessage('Product created successfully!');
             if (onProductCreated) {
-                onProductCreated(); // Callback to refresh product list
+                onProductCreated();
             }
-            // Reset form fields
+
             setName('');
             setDescription('');
             setCategory('');
