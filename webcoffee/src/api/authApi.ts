@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { LoginPost, RegisterPost } from './models/authPost';
 
-const BASE_URL = 'https://localhost:7055/api/auth/customer';
+const BASE_URL = 'https://localhost:7055/api/auth/user';
 
 export const register = async (registerRequest: RegisterPost) => {
     try {
