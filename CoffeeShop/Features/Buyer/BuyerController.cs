@@ -8,7 +8,7 @@ namespace CoffeeShop.Features.Buyer;
 
 [ApiController]
 [Route("api/buyer")]
-[Authorize(AuthenticationSchemes = "JwsToken", Policy = "Moderator")]
+
 public class BuyerController : Controller
 {
     private readonly IBuyerService _buyerService;
