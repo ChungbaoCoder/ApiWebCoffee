@@ -1,12 +1,14 @@
 # ApiWebCoffeeShop
 
-## How to use this
+### This is my third big project don't use it because it have many hiccup on the way
 
-### Open visual studio or any text editor that support .net
+#### How to use this
 
-### Go to appsetting.json to edit your database connection
+Open visual studio or any text editor that support .net
 
-### Run migration by typing down
+Go to appsetting.json to edit your database connection
+
+#### Run migration by typing down
 
 Update-database
 
